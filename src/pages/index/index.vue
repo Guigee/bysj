@@ -1,13 +1,16 @@
 <template>
     <div>
+        <!-- 标题栏 -->
         <div class="container" >
             <div class="message" @click="clickHandle">{{msg}}</div>
             <a  class="skip">
                 <span class="add" @click="showadd"></span>
             </a>
         </div>
+
+        <!-- 添加好友页 -->
         <div class="showorhide" v-if="show">
-            <div class="container"><div class="title">{{xinxi}}</div></div>
+            <div class="container"><div class="title">{{message}}</div></div>
             <div class="detail">
                 <div>
                     <div class="photo" @click.stop="uploadHeadImg">
@@ -17,12 +20,18 @@
                     </div>
                     <input type="file" accept="image/*" @change="handleFile" class="hiddenInput" />
                 </div>
+
                 <div class="information">姓名：</div>
-                <input v-model="person.name" class="input" placeholder="eg：记录同学姓名">
+                <input v-model="person.name" class="input" placeholder="eg：记录同学姓名" @click="handleUsernameInputCheack">
+                <span class="checkInput" v-if="checkUsernameShow">* 请输入用户名.</span>
+
                 <div class="information">电话：</div>
-                <input v-model="person.number" class="input" placeholder="eg：记录同学号码">
+                <input v-model="person.number" class="input" placeholder="eg：记录同学号码" @click="handleNumberInputCheack">
+                <span class="checkInput" v-if="checkNumberShow">* 请输入电话号码.</span>
+
                 <div class="information">毕业班级：</div>
                 <input v-model="person.grade" class="input" placeholder="eg：记录同学班级">
+
                 <div class="information">地区：</div>
                 <input v-model="person.area" class="input" placeholder="eg：记录同学地区">
                 <div class="information">留言：</div>
@@ -34,6 +43,7 @@
             </div>
         </div>
 
+        <!-- 好友详情页 -->
         <div class="particular" v-if="hide">
             <div class="container"><div class="nav">详情页</div></div>
             <img src="../../../static/images/head.jpg" class="img">
@@ -55,6 +65,7 @@
             <div @click="closedetail" class="min">关闭</div>
         </div>
 
+        <!-- 同学列表 -->
         <div class="content-list">
             <ul>
                 <listitem v-for="(item,index) in list" :key="index" :content="item.name" :ind="index"
@@ -83,12 +94,14 @@ export default {
                 notes: '',
                 grade: ''
             },
-            xinxi: '信息填入',
+            message: '信息填入',
             msghead: true,
             list: [],
             show: false,
             hide: false,
-            index: 0
+            index: 0,
+            checkUsernameShow: false,
+            checkNumberShow: false
         }
     },
 
@@ -120,10 +133,32 @@ export default {
             this.hide = true
         },
 
+        // 校验输入用户名是否为空
+        checkUsername() {
+            this.checkUsernameShow = true
+        },
+
+        checkNumber() {
+            this.checkNumberShow = true
+        },
+
+        //点击input框重新校验
+        handleUsernameInputCheack() {
+            this.checkUsernameShow = false
+        },
+
+        handleNumberInputCheack() {
+            this.checkNumberShow = false
+        },
+
         addItem() {
             if (!this.person.name) {
-                return this
-            } else {
+                return this.checkUsername()
+            } 
+            if (!this.person.number) {
+                return this.checkNumber()
+            }
+            else {
                 let { name, number, area, notes, grade} = this.person
                 let p = {
                     name,
@@ -147,7 +182,7 @@ export default {
         removeItem(e) {
             this.list.splice(e,1)
         },
-       // 打开图片上传
+        // 打开图片上传
         uploadHeadImg() {
             // 点击的时候触发input打开图片上传的点击事件
             this.$el.querySelector(".hiddenInput").click();
@@ -292,7 +327,7 @@ export default {
         bottom: 0;
         width: 100%;
         /* z-index: 10; */
-        background-color: antiquewhite;
+        background-color: #fff;
     }
     .nav {
         color: black;
@@ -339,6 +374,14 @@ export default {
         font-family: 'Courier New', Courier, monospace
     }
 
+    .checkInput {
+        display: inline-block;
+        font-size: 12px;
+        color: red;
+        position: relative;
+        bottom: 18px;
+        left: 5px;
+    }
     /* 更改头像css */
 .photo {
   display: flex;
