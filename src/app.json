@@ -1,8 +1,7 @@
 {
   "pages": [
-    "pages/index/main",
     "pages/middle/main",
-    "pages/right/main"
+    "pages/index/main"
   ],
   "window": {
     "backgroundTextStyle": "light",
@@ -26,11 +25,6 @@
       "pagePath": "pages/middle/main",
       "iconPath": "static/tabs/orders.png",
       "selectedIconPath": "static/tabs/orders-active.png"
-    },{
-      "text": "聊天会话",
-      "pagePath": "pages/right/main",
-      "iconPath": "static/tabs/home.png",
-      "selectedIconPath": "static/tabs/home-active.png"
     }],
     "position": "bottom"
   }

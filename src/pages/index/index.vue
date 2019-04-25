@@ -8,26 +8,31 @@
             </a>
         </div>
 
+        <!-- 无好友图标 -->
+        <div class="no-person" v-if="isPersonList">
+            <img src="../../../static/images/noaddress.png" class="no-address"/>
+            <span class="no-person-text">暂无通讯录列表</span>
+            <span class="no-person-text-two">点击右上角图标创建同学名片<span class="top-right"></span></span>
+            
+        </div>
+
         <!-- 添加好友页 -->
         <div class="showorhide" v-if="show">
             <div class="container"><div class="title">{{message}}</div></div>
             <div class="detail">
-                <div>
-                    <div class="photo" @click.stop="uploadHeadImg">
-                        <!-- <img :src="imgSrc"> -->
-                        <img :src="userInfo.avatar" />
-                        <span class="img-title">头像</span>
-                    </div>
-                    <input type="file" accept="image/*" @change="handleFile" class="hiddenInput" />
-                </div>
+
+                <view class='top_head_border' @click="headimage">   
+                    <image class='top_head' mode="aspecFill" :src='head'></image>  
+                    <!-- <view class='top_text' mode="aspecFill" >更换头像</view> -->
+                </view>
 
                 <div class="information">姓名：</div>
                 <input v-model="person.name" class="input" placeholder="eg：记录同学姓名" @click="handleUsernameInputCheack">
-                <span class="checkInput" v-if="checkUsernameShow">* 请输入用户名.</span>
+                <span class="checkInput" v-if="checkUsernameShow">*请输入用户名.</span>
 
-                <div class="information">电话：</div>
+                <div class="information">手机号码：</div>
                 <input v-model="person.number" class="input" placeholder="eg：记录同学号码" @click="handleNumberInputCheack">
-                <span class="checkInput" v-if="checkNumberShow">* 请输入电话号码.</span>
+                <span class="checkInput" v-if="checkNumberShow">*请输入电话号码.</span>
 
                 <div class="information">毕业班级：</div>
                 <input v-model="person.grade" class="input" placeholder="eg：记录同学班级">
@@ -46,7 +51,9 @@
         <!-- 好友详情页 -->
         <div class="particular" v-if="hide">
             <div class="container"><div class="nav">详情页</div></div>
-            <img src="../../../static/images/head.jpg" class="img">
+            <img src="https://gss0.bdstatic.com/-4o3dSag_xI4khGkpoWK1HF6hhy/baike/c0%3Dbaike92%2C5%2C5%2C92%2C30/sign=62d46c39067b020818c437b303b099b6/d4628535e5dde7119c3d076aabefce1b9c1661ba.jpg" 
+                class="img"
+                @click="headimage">
             <div class="headright">
                 <div class="name">{{list[index].name}}<span class="headphoto"></span></div>
                 
@@ -57,7 +64,7 @@
 
                 <div class="number">地区：{{list[index].area}}</div>
 
-                <div class="number">毕业纪念照<a href="../middle/main" class="changeto"><span ></span></a></div>
+                <div class="number">毕业纪念照<a href="../../pages/middle/main" class="changeto"></a></div>
                 
             </div>
             <div class="notestyle">好友留言：{{list[index].notes}}</div>
@@ -69,7 +76,7 @@
         <div class="content-list">
             <ul>
                 <listitem v-for="(item,index) in list" :key="index" :content="item.name" :ind="index"
-                @deleate="removeItem(index)"
+                @deleate="removeItem(index,item)"
                 @detailpage="detailshow"
                 ></listitem>
             </ul>
@@ -101,13 +108,24 @@ export default {
             hide: false,
             index: 0,
             checkUsernameShow: false,
-            checkNumberShow: false
+            checkNumberShow: false,
+            isPersonList: true,
+
+            showModal: false,
+            head: 'https://gss0.bdstatic.com/-4o3dSag_xI4khGkpoWK1HF6hhy/baike/c0%3Dbaike92%2C5%2C5%2C92%2C30/sign=62d46c39067b020818c437b303b099b6/d4628535e5dde7119c3d076aabefce1b9c1661ba.jpg'
         }
     },
 
     computed: {
         msg() {
             return this.msghead ? '通讯录' : '点击右侧添加好友名片'
+        },
+    },
+
+    mounted(){
+        this.getUser()
+        if(!this.list.length){
+            this.isPersonList = false
         }
     },
 
@@ -118,6 +136,7 @@ export default {
 
         showadd() {
             this.show = !this.show
+            this.isPersonList = false
         },
 
         closeadd() {
@@ -166,47 +185,102 @@ export default {
                     area,
                     notes,
                     grade
+                
                 }
-                this.list.push(p)
+                console.log(this.list,'??sadasd')
+                // this.list.push(p)
+                
+                wx.request({ 
+                    data:JSON.stringify(p),
+                    method:'post',
+                    url:this.$url+'/login',
+                    success:res=>{
+                        console.log(res,'????')
+                    }
+                })
                 this.person.name = ''
                 this.person.number=''
                 this.person.area=''
                 this.person.notes=''
                 this.person.grade=''
+                setTimeout(()=>{
+                   this.getUser()
+                },0)
             }
             if(this.show){
-                this.closeadd();
+                this.closeadd();  
             }
+        }, 
+        
+        removeItem(e,item) {
+            //this.list.splice(e,1)
+            if(this.list.length===0){
+                this.isPersonList = true
+            }
+             wx.request({ 
+                data:JSON.stringify(item),
+                method:'post',
+                url:this.$url+'/deleteConnecter',
+                success:res=>{
+                    let listData = res.data.msg
+                    listData = e
+                    this.list.splice(listData, 1)
+                    console.log(res,'????')
+                }
+            })
         },
-
-        removeItem(e) {
-            this.list.splice(e,1)
+        getUser(){
+           wx.request({ 
+                    data:JSON.stringify({}),
+                    method:'post',
+                    url:this.$url+'/getUser',
+                    success:res=>{
+                        this.list=res.data.msg
+                        console.log(res,'2312424')
+                    }
+                })
         },
-        // 打开图片上传
-        uploadHeadImg() {
-            // 点击的时候触发input打开图片上传的点击事件
-            this.$el.querySelector(".hiddenInput").click();
-        },
-        // 将头像显示
-        handleFile(e) {
-            //获取当前点击事件的target元素对其进行兼容
-            let $target = e.target || e.srcElement;
-            //   取第一个元素
-            let file = $target.files[0];
-            /**
-             * 使用FileReader对象，
-             * web应用程序可以异步的读取存储在用户计算机上的文件(或者原始数据缓冲)内容，
-             * 可以使用File对象或者Blob对象来指定所要处理的文件或数据。
-             *  */ 
-            var reader = new FileReader();// //读取本地文件，以gbk编码方式输出
-            reader.onload = data => {//成功读取后
-                console.log(data)
-                let res = data.target || data.srcElement;
-                //读取完毕后输出结果
-                this.userInfo.avatar = res.result;
-            };
-            reader.readAsDataURL(file);
+          headimage: function() {   
+            var _this = this;
+            console.log(this,'?????')
+            
+            wx.chooseImage({    
+                count: 1, // 默认9      
+                sizeType: ['original', 'compressed'],       
+                // 指定是原图还是压缩图，默认两个都有      
+                sourceType: ['album', 'camera'],      
+                // 指定来源是相册还是相机，默认两个都有    
+                success: function(res) { 
+                    var tempFilePaths = res.tempFilePaths 
+                     
+                        _this.head = tempFilePaths
+                        console.log(res.tempFilePaths[0],'文件路径')
+                        wx.uploadFile({
+                    url: _this.$url+'/uploadFile',
+                    filePath:res.tempFilePaths[0],
+                    name:'image',
+                    header: { "Content-Type": "multipart/form-data" },
+                    //  formData: {
+                    //    filePath:res.tempFilePaths[0]
+                    //  }, // HTTP 请求中其他额外的 form data
+                    success: function(res){
+                        var resData = res.data;
+                        
+                        // success
+                    },
+                    fail: function(res) {
+                        // fail
+                        var resData =res;
+                    },
+                    complete: function() {
+                        // complete
+                    }
+                    })
+                          
+                }    
+            }) 
         }
+
     },
 
     components: {
@@ -230,7 +304,7 @@ export default {
         margin-top: 5px;
     }
     .skip {
-        display: inline-block;
+        display: block;
         float: right;
     }
     .headphoto {
@@ -257,15 +331,15 @@ export default {
     }
     
     .add {
-        /* float: right;  */
-        display: inline-block;
+        float: right; 
+        display: block;
         background-image: url(../../../static/images/add.png);
         width: 32px;
         height: 32px;
         background-size: 32px 32px;
         background-repeat: no-repeat;
         margin-right: 20px;
-        vertical-align: middle;
+        /* vertical-align: middle; */
     }
     .close {
         display: inline-block;
@@ -280,7 +354,7 @@ export default {
     }
     .input {
         display: inline-block;
-        width: 70%;
+        width: 90%;
         padding: 8px;
         border-radius: 6px;
         background: #F5F5F5;
@@ -288,23 +362,24 @@ export default {
         font-size: 12px;
         height: 20px;
         line-height: 20px;
-        border: 0;
+        /* border: 0; */
         /* vertical-align: top; */
-        box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.3);
+        /* box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.3); */
         margin-left: 4px;
         margin-bottom: 3px;
     }
     .notesinfor {
         display: inline-block;
-        width: 70%;
+        width: 90%;
         padding: 10px;
         border-radius: 6px;
         background: #F5F5F5;
         outline: none;
         font-size: 12px;
-        height: 60px;
-        border: 0;
-        box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.3);
+        height: 50px;
+        border: 0.5px solid #eeeeee;
+        /* border: 0; */
+        /* box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.3); */
         margin-left: 4px;
     }
     .showorhide{
@@ -319,6 +394,7 @@ export default {
         font-size: 15px;
         margin-left: 5px;
         font-family: 'Courier New', Courier, monospace;
+        margin-top: 8px;
     }
 
     .particular{
@@ -336,8 +412,9 @@ export default {
     }
     .img {
         width: 45%;
-        height: 200px;
-        border-radius: 8px;
+        height: 180px;
+        border-radius: 50%;
+        margin-top:8px;
         /* overflow: hidden; */
     }
     .name {
@@ -363,7 +440,8 @@ export default {
     .notestyle {
         margin: 10px 0 0 5px;
         padding: 5px;
-        font-size: 10px;
+        font-size: 15px;
+        line-height: 15px;
     }
     .min {
         text-align: center;
@@ -382,30 +460,54 @@ export default {
         bottom: 18px;
         left: 5px;
     }
-    /* 更改头像css */
-.photo {
-  display: flex;
-  -webkit-box-pack: justify;
-  -webkit-justify-content: space-between;
-  -ms-flex-pack: justify;
-  justify-content: space-between;
-  align-items: center;
-  padding-bottom: 0.266667rem;
-  background-color: #fff;
-  padding: 0.4rem;
-}
-  .photo img {
-    width: 1.333333rem;
-    height: 1.333333rem;
-  }
-  .img-title {
-    margin-right: 0.4rem;
-    color: rgb(102, 102, 102);
-    font-size: 0.426667rem;
-  }
 
-.hiddenInput{
-    display: none;
-}
-/* 更改头像结束 */
+    /* 更改头像css */
+    .top_head {
+        margin-top: 30rpx;
+        width: 100rpx; 
+        height: 100rpx; 
+        border-radius: 100%; 
+        border: 1px solid rgba(51, 51, 51, 1);
+       }
+    /* 更改头像结束 */
+
+    /* 无列表图标 */
+    .no-person {
+        position: absolute;
+        min-width: 100px;
+    }
+    .no-address {
+        position: relative;
+        width: 100px;
+        height: 100px;
+        left: 140px;
+        top: 100px;
+    }
+    .no-person-text {
+        display: block;
+        position:relative;
+        top: 100px;
+        left: 140px;
+        font-size: 15px;
+        color: gray;
+    }
+    .no-person-text-two {
+        display: block;
+        position:relative;
+        top: 110px;
+        left: 100px;
+        text-align: center;
+        font-size: 15px;
+        color: gray;
+    }
+    .top-right {
+        display: inline-block;
+        background-image: url(../../../static/images/topRight.png);
+        width: 15px;
+        height: 15px;
+        background-size: 15px 15px;
+        background-repeat: no-repeat;
+        margin-left: 5px;
+        vertical-align: middle;
+    }
 </style>

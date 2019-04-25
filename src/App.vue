@@ -13,6 +13,8 @@ export default {
     background-color: #fcfafa;
     border-bottom: 0.5px solid #eeeeee;
     margin-bottom: 3px;
+    font-size: 18px;
+    line-height: 20px;
     font-family: 'Courier New', Courier, monospace
   }
 </style>
