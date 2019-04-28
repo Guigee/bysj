@@ -6,11 +6,12 @@ App.mpType = 'app'
 
 const app = new Vue(App)
 // const loc='http://localhost:3000'
-const loc='http://192.168.31.254:3000'
-
+const loc='http://172.31.102.196:3000'
+import qs from 'qs'
+Vue.prototype.$qs=qs
 Vue.prototype.$url=loc
 app.$mount()
-function Ajax(obj){
+function Ajax(obj){ 
     let xhr = new XMLHttpRequest()
     xhr.onreadystatechange = function() {
         // readyState == 4说明请求已完成

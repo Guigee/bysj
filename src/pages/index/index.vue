@@ -51,7 +51,7 @@
         <!-- 好友详情页 -->
         <div class="particular" v-if="hide">
             <div class="container"><div class="nav">详情页</div></div>
-            <img src="https://gss0.bdstatic.com/-4o3dSag_xI4khGkpoWK1HF6hhy/baike/c0%3Dbaike92%2C5%2C5%2C92%2C30/sign=62d46c39067b020818c437b303b099b6/d4628535e5dde7119c3d076aabefce1b9c1661ba.jpg" 
+            <img :src="detailPic" 
                 class="img"
                 @click="headimage">
             <div class="headright">
@@ -77,7 +77,7 @@
             <ul>
                 <listitem v-for="(item,index) in list" :key="index" :content="item.name" :ind="index"
                 @deleate="removeItem(index,item)"
-                @detailpage="detailshow"
+                @detailpage="detailshow(index,item)"
                 ></listitem>
             </ul>
         </div>
@@ -91,6 +91,7 @@ import listitem from '../../components/listitem.vue'
 export default {
     data() {
         return {
+            detailPic:'',
             userInfo: {
                 avatar: 'https://gss0.bdstatic.com/-4o3dSag_xI4khGkpoWK1HF6hhy/baike/c0%3Dbaike92%2C5%2C5%2C92%2C30/sign=62d46c39067b020818c437b303b099b6/d4628535e5dde7119c3d076aabefce1b9c1661ba.jpg'
             },
@@ -147,9 +148,10 @@ export default {
             this.hide = false
         },
 
-        detailshow(index) {
+        detailshow(index,item) {
             this.index = index
             this.hide = true
+            this.detailPic=this.$url+`/image?number=${item.img}`
         },
 
         // 校验输入用户名是否为空
@@ -187,17 +189,40 @@ export default {
                     grade
                 
                 }
-                console.log(this.list,'??sadasd')
+                // console.log(this.list,'??sadasd')
                 // this.list.push(p)
-                
-                wx.request({ 
-                    data:JSON.stringify(p),
-                    method:'post',
-                    url:this.$url+'/login',
-                    success:res=>{
-                        console.log(res,'????')
+               
+                let _this=this
+                 wx.uploadFile({
+                    url: _this.$url+`/uploadFile?${_this.$qs.stringify(p)}`,
+                    filePath:_this.head[0], 
+                    formData:p,
+                    name:'image',
+                    header: { "Content-Type": "multipart/form-data" },
+                    //  formData: {
+                    //    filePath:res.tempFilePaths[0]
+                    //  }, // HTTP 请求中其他额外的 form data
+                    success: function(res){
+                        var resData = res.data;
+                        console.log('上传成功')
+                        // success
+                    },
+                    fail: function(res) {
+                        // fail
+                        var resData =res;
+                    },
+                    complete: function() {
+                        // complete
                     }
-                })
+                    })
+                // wx.request({ 
+                //     data:JSON.stringify(p),
+                //     method:'post',
+                //     url:this.$url+'/login',
+                //     success:res=>{
+                //         console.log(res,'????')
+                //     }
+                // })
                 this.person.name = ''
                 this.person.number=''
                 this.person.area=''
@@ -251,31 +276,12 @@ export default {
                 sourceType: ['album', 'camera'],      
                 // 指定来源是相册还是相机，默认两个都有    
                 success: function(res) { 
+                    
                     var tempFilePaths = res.tempFilePaths 
                      
                         _this.head = tempFilePaths
                         console.log(res.tempFilePaths[0],'文件路径')
-                        wx.uploadFile({
-                    url: _this.$url+'/uploadFile',
-                    filePath:res.tempFilePaths[0],
-                    name:'image',
-                    header: { "Content-Type": "multipart/form-data" },
-                    //  formData: {
-                    //    filePath:res.tempFilePaths[0]
-                    //  }, // HTTP 请求中其他额外的 form data
-                    success: function(res){
-                        var resData = res.data;
-                        
-                        // success
-                    },
-                    fail: function(res) {
-                        // fail
-                        var resData =res;
-                    },
-                    complete: function() {
-                        // complete
-                    }
-                    })
+                       
                           
                 }    
             }) 
