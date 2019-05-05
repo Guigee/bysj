@@ -242,6 +242,10 @@ export default {
             if(this.list.length===0){
                 this.isPersonList = true
             }
+
+            /**
+             * 删除数据库字段
+             */
              wx.request({ 
                 data:JSON.stringify(item),
                 method:'post',
@@ -254,6 +258,10 @@ export default {
                 }
             })
         },
+
+        /**
+         * 获取数据库字段
+         */
         getUser(){
            wx.request({ 
                     data:JSON.stringify({}),

@@ -4,6 +4,7 @@
         <div class="message">{{msg}}</div>
     </div>
 
+  <!-- 毕业照主页面 -->
     <div class="middle-create-template"> 
       <img src="../../../static/images/middle-background.jpg" alt="毕业照" class="images">
 
@@ -13,13 +14,34 @@
         <p class="middle-create-texttwo">我们的毕业纪念</p>
       </div>
 
-      <div class="middle-create-enter">开始制作</div>
+      <div class="middle-create-enter" @click="showStoryCreate">开始制作</div>
       <div class="middle-create-info">
         <span class="middle-create-info-img" @click="showEleImgStore"><span class="img-book"></span>我的电子相册</span>
         <span class="middle-create-info-store"><span class="img-person"></span>我的毕业故事</span>
       </div>
     </div>
 
+      <!-- 制作毕业故事页面 -->
+    <div class="story-create-index-and-background" v-if="showStory">
+      <div class="story-create-index" >
+        <div class="story-create-selectimg">
+          <img class="story-img" src="../../../static/images/img-story-create.jpg" >
+          <div class="story-create-text">
+            <p class="line-one">请上传6张</p>
+            <p class="line-one">你觉得毕业时最有意思的照片吧</p>
+            <p class="line-two">你的毕业故事</p>
+            <p class="line-two">很快就可以生成哦</p>
+          </div>
+          <div class="story-create-btn" @click="imgSelect">挑选照片→</div>
+        </div>
+        <span @click="closeStoryCreate" class="close-story">取消</span>
+      </div>
+      <!-- 背景层 -->
+      <div class="storyBackground"></div> 
+    </div>
+    
+
+  <!-- 电子相册页面 -->
     <div class="ele-img-store" v-if="showImgStore">
       <div class="container">
         <div class="title">电子相册</div>
@@ -30,9 +52,33 @@
         </div>
         <img @click="previewImg(index)" v-for="(src,index) in urls" :key="src" :src="src" :style="{'width':width || '120rpx','height':height || '120rpx'}" class="img" >
       </div>
-      <div @click="hideEleImgStore">back</div>
+      <div @click="hideEleImgStore" class="backIndex">back</div>
     </div>
-        
+
+   <!--选择照片页面  -->
+    <div class="img-select-index" v-if="showImgSelect">
+      <div class="img-select-box">
+        <div class="j-pic-upload">
+          <div class="j-upload-btn" @click="uploadImg" :style="{'width':width || '120rpx','height':height || '120rpx'}">
+              <span class="j-upload-add">+</span>
+          </div>
+          <img @click="previewImg(index)" v-for="(src,index) in urls" :key="src" :src="src" :style="{'width':width || '120rpx','height':height || '120rpx'}" class="img" >
+        </div>
+
+        <div class="attention">
+          <p class="attention-one">温馨提示</p>
+          <p>第一张图片为书的封面</p>
+          <p>点击图片可删除并替换</p>
+        </div>
+      </div>
+
+      <div class="img-submit">
+        <span @click="hideEleImgStore" class="backIndex">取消上传</span>
+        <span class="submit-btn">
+          提交
+        </span>
+      </div>
+    </div>
       
   </div>
 </template>
@@ -44,13 +90,19 @@
         return {
           urls: [],
           msg: '留影纪念',
-          showImgStore: false
+          showImgStore: false,
+          showStory: false,
+          showImgSelect: false
         }
       },
       // mounted(){
       //   this.urls = this.\|| [];
       // },
       methods:{
+
+        /**
+         * 电子相册的js方法
+         */
         uploadImg(){
           let that = this;
           wx.chooseImage({
@@ -84,12 +136,26 @@
           });
         },
 
+
         showEleImgStore() {
           this.showImgStore = !this.showImgStore
         },
 
         hideEleImgStore() {
           this.showImgStore = false
+          this.showImgSelect = false
+        },
+
+        showStoryCreate() {
+          this.showStory = true
+        },
+
+        closeStoryCreate() {
+          this.showStory = false
+        },
+
+        imgSelect() {
+          this.showImgSelect = true
         }
       }
     }
@@ -229,4 +295,126 @@
       vertical-align: middle;
     }
 
+
+    /* 背景层和弹出框css */
+    .story-create-index {
+      font-size: 16px;
+      line-height: 16px;
+      position: relative;
+      width: 300px;
+      height: 230px;
+      top: 240px;
+      margin: 0 auto;
+      text-align: center; 
+      z-index: 12;
+      background-color: rgba(192,192,192,1);
+      border: 1px solid #ffffff;
+      border-radius: 10px;
+      /* background: gray; */
+    }
+    /* .storyBackground {
+      position: absolute;
+      left: 0;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 10;
+      filter: blur(50px);
+    } */
+    .story-create-index-and-background {
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      width: 100%;
+    }
+
+    .story-img {
+      width: 300px;
+      height: 60px;
+      border-radius: 10px;
+    }
+
+    .story-create-text {
+      margin: 5px 0 10px 0;
+    }
+    .line-one {
+      font-weight: bold;
+      padding: 5px;
+    }
+    .line-two {
+      padding: 5px;
+    }
+
+    .story-create-btn {
+      margin-top: 10px;
+      color: #1296db;
+      text-decoration: underline;
+    }
+
+    .close-story {
+      padding: 10px;
+      color: #1296db;
+      float: right;
+    }
+
+    .img-select-index {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 100%;
+      background-color: gray;
+    }
+    .img-select-box {
+      position: relative;
+      width: 80%;
+      height: 70%;
+      top: 60px;
+      left: 30px;
+      background-color: #ffffff; 
+      border: 1px solid #ffffff;
+    }
+    .attention {
+      position: fixed;
+      font-size: 15px;
+      font-family: 'Courier New', Courier, monospace;
+      color: #888888;
+      bottom: 120px;
+      left: 95px;
+      margin: 6px;
+    }
+    .attention p {
+      position: relative;
+      margin: 6px;
+      text-align: center;
+    }
+    .backIndex {
+      padding: 5px;
+      background: #ffffff;
+      color: #aaaaaa;
+      border-radius: 10px;
+      font-weight: blod;
+    }
+    .attention-one {
+      border: 1px solid #888888;
+      border-radius: 10px;
+      padding: 3px 0;
+    }
+    .img-submit {
+     position: relative;
+     left: 30px;
+     top: 80px;
+     font-size: 15px;
+    font-weight: blod;
+    }
+    .submit-btn {
+      position: relative;
+      float: right;
+      right: 74px;
+      bottom: 6px;
+      padding: 5px;
+      color: #aaaaaa;
+      background: #ffffff;
+      border-radius: 10px;
+      font-weight: blod;
+    }
 </style>

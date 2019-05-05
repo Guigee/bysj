@@ -14,7 +14,7 @@ var connection = mysql.createConnection({
   host     : 'localhost',
   user     : 'root',
   password : '123456',
-  database : 'faifai'
+  database : 'test'
 });
 var formidable = require('formidable');
 connection.connect();
@@ -130,4 +130,4 @@ app.post('/login',(req,res)=>{
 // mysql.query(sql,(err,res)=>{
 //     res
 // })
-http.createServer(app).listen(3000,'172.31.102.196')
+http.createServer(app).listen(3000,'192.168.31.254')
