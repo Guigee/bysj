@@ -14,8 +14,7 @@ router.post('/',multipartMiddleware,async (req,res)=>{
     let urls = []
     for(let key in req.files){
         console.log(req.files[key])
-    await  readFileStreamAndWriteFile(req.files[key].path,'file').then(ret=>{
-        
+    await  readFileStreamAndWriteFile(req.files[key].path,'file').then(ret=>{ 
            urls.push(ret)     
       })
     }
