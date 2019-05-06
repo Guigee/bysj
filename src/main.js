@@ -5,8 +5,8 @@ Vue.config.productionTip = false
 App.mpType = 'app'
 
 const app = new Vue(App)
-// const loc='http://localhost:3000'
-const loc='http://192.168.31.254:3000'
+const loc='http://localhost:3000'
+// const loc='http://192.168.31.254:3000'
 import qs from 'qs'
 Vue.prototype.$qs=qs
 Vue.prototype.$url=loc

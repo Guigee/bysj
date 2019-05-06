@@ -151,7 +151,7 @@ export default {
         detailshow(index,item) {
             this.index = index
             this.hide = true
-            this.detailPic=this.$url+`/image?number=${item.img}`
+            this.detailPic=this.$url+`/image/${item.imgUrl}`
         },
 
         // 校验输入用户名是否为空
@@ -194,7 +194,8 @@ export default {
                
                 let _this=this
                  wx.uploadFile({
-                    url: _this.$url+`/uploadFile?${_this.$qs.stringify(p)}`,
+                    // url: _this.$url+`/uploadFile?${_this.$qs.stringify(p)}`,
+                    url:_this.$url+'/api/connecters',
                     filePath:_this.head[0], 
                     formData:p,
                     name:'image',
@@ -247,9 +248,8 @@ export default {
              * 删除数据库字段
              */
              wx.request({ 
-                data:JSON.stringify(item),
-                method:'post',
-                url:this.$url+'/deleteConnecter',
+                method:'delete',
+                url:this.$url+`/api/connecters/${item._id}`,
                 success:res=>{
                     let listData = res.data.msg
                     listData = e
@@ -265,10 +265,10 @@ export default {
         getUser(){
            wx.request({ 
                     data:JSON.stringify({}),
-                    method:'post',
-                    url:this.$url+'/getUser',
+                    method:'get',
+                    url:this.$url+'/api/connecters',
                     success:res=>{
-                        this.list=res.data.msg
+                        this.list=res.data
                         console.log(res,'2312424')
                     }
                 })
