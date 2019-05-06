@@ -74,12 +74,42 @@
 
       <div class="img-submit">
         <span @click="hideEleImgStore" class="backIndex">取消上传</span>
-        <span class="submit-btn">
+        <span class="submit-btn" @click="showGrade">
           提交
         </span>
       </div>
     </div>
-      
+
+      <!--毕业故事制作页面 -->
+    <div class="grade-story-diy" v-if="showGradeStory">
+      <view class="page-section">
+        <div class="page-section-text">
+          <p class="text-one">{{isTextOne}}</p>
+          <p class="text-one">{{isTextTwo}}</p>
+          <div class="page-section-text-two">
+            <p class="text-two">{{isTextThree}}</p>
+          </div>
+        </div>
+
+        <movable-area scale-area>
+          <!-- <div class="testOne"></div> -->
+          <movable-view direction="all" bindchange="onChange" bindscale="onScale" scale scale-min="0.5" scale-max="4" :scale-value="scale">
+            <img src="../../../static/images/headPhoto.jpg" class="diyimg">
+          </movable-view>
+        </movable-area>
+      </view>
+      <div class="changeText" v-if="isShowText">
+        <input type="text" v-model="isTextOne">
+        <input type="text" v-model="isTextTwo">
+        <input type="text" v-model="isTextThree">
+        <span @click="closeChangeText">提交</span>
+      </div>
+      <div class="dom-text" v-if="isDom">
+        <span class="backIndex" @click="showChangeText">修改文字</span>
+        <span class="backIndex" @click="resetGradeStory">重新制作</span>
+        <span class="backIndex" @click="closeGradeStory">取消制作</span>
+      </div>
+    </div>
   </div>
 </template>
  
@@ -90,15 +120,45 @@
         return {
           urls: [],
           msg: '留影纪念',
+          isTextOne: "我的",
+          isTextTwo: "毕业故事",
+          isTextThree: "星星 著",
           showImgStore: false,
           showStory: false,
-          showImgSelect: false
+          showImgSelect: false,
+          showGradeStory: false,
+          isShowText: false,
+          isDom: true,
+          x: 0,
+          y: 0,
+          scale: 2
         }
       },
       // mounted(){
       //   this.urls = this.\|| [];
       // },
       methods:{
+
+        /**
+         * 图片滑动
+         */
+        tap(e) {
+          this.setData({
+            x: 30,
+            y: 30
+          })
+        },
+        tap2() {
+          this.setData({
+            scale: 3
+          })
+        },
+        onChange(e) {
+          console.log(e.detail)
+        },
+        onScale(e) {
+          console.log(e.detail)
+        },
 
         /**
          * 电子相册的js方法
@@ -156,6 +216,30 @@
 
         imgSelect() {
           this.showImgSelect = true
+        },
+
+        showGrade() {
+          this.showGradeStory = true
+        },
+
+        resetGradeStory() {
+          this.showGradeStory = false
+        },
+
+        closeGradeStory() {
+          this.showGradeStory = false
+          this.showImgSelect = false
+          this.showStory = false
+        },
+
+        showChangeText() {
+          this.isShowText = true
+          this.isDom = false
+        },
+
+        closeChangeText() {
+          this.isShowText = false
+          this.isDom = true
         }
       }
     }
@@ -357,6 +441,7 @@
       float: right;
     }
 
+    /* 点击开始制作 选择照片部分css */
     .img-select-index {
       position: absolute;
       top: 0;
@@ -393,6 +478,7 @@
       color: #aaaaaa;
       border-radius: 10px;
       font-weight: blod;
+      margin-right: 5px;
     }
     .attention-one {
       border: 1px solid #888888;
@@ -404,7 +490,7 @@
      left: 30px;
      top: 80px;
      font-size: 15px;
-    font-weight: blod;
+     font-weight: blod;
     }
     .submit-btn {
       position: relative;
@@ -416,5 +502,90 @@
       background: #ffffff;
       border-radius: 10px;
       font-weight: blod;
+    }
+
+    /* 毕业故事制作css */
+    .grade-story-diy {
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      width: 100%;
+      background: gray;
+    }
+
+    movable-view {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 200rpx;
+      width: 200rpx;
+      background: #ffffff;
+    }
+
+    movable-area {
+      position: fixed;
+      top: 230px;
+      height: 200px;
+      width: 555rpx;
+      margin: 10px;
+      background-color: #ffffff;
+      overflow: hidden;
+      border: 1rpx solid #cccccc;
+    }
+
+    .max {
+      width: 600rpx;
+      height: 600rpx;
+    }
+
+    .page-section{
+      position: absolute;
+      top: 60px;
+      right: 30px;
+      width: 300px;
+      height: 400px;
+      background-color: burlywood;
+      margin-bottom: 60rpx;
+    }
+
+    .diyimg {
+      width: 200rpx;
+      height: 200rpx;
+    }
+
+    .page-section-text {
+      margin: 30px 0 0 10px;
+      width: 300px;
+      height: 150px;
+    }
+    .page-section-text-two {
+      float: right;
+      width: 50px;
+      height: 150px;
+      margin: 20px 20px 0 0;
+    }
+    .text-two {
+      font-size: 15px;
+      line-height: 15px;
+      color: black;
+    }
+    .text-one {
+      font-size: 25px;
+      line-height: 25px;
+      font-weight: bold;
+      color: black;
+      padding: 5px;
+    }
+    .dom-text {
+      position: fixed;
+      bottom: 40px;
+      left: 42px;
+    }
+    .changeText {
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      width: 100%;
+      background: #fff;
     }
 </style>
