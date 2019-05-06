@@ -75,6 +75,7 @@
         <!-- 同学列表 -->
         <div class="content-list">
             <ul>
+              
                 <listitem v-for="(item,index) in list" :key="index" :content="item.name" :ind="index"
                 @deleate="removeItem(index,item)"
                 @detailpage="detailshow(index,item)"
@@ -87,10 +88,12 @@
 
 <script>
 import listitem from '../../components/listitem.vue'
+import { setTimeout } from 'timers';
 
 export default {
     data() {
         return {
+            canIUse: wx.canIUse('button.open-type.getUserInfo'),
             detailPic:'',
             userInfo: {
                 avatar: 'https://gss0.bdstatic.com/-4o3dSag_xI4khGkpoWK1HF6hhy/baike/c0%3Dbaike92%2C5%2C5%2C92%2C30/sign=62d46c39067b020818c437b303b099b6/d4628535e5dde7119c3d076aabefce1b9c1661ba.jpg'
@@ -124,13 +127,42 @@ export default {
     },
 
     mounted(){
-        this.getUser()
+       
         if(!this.list.length){
             this.isPersonList = false
         }
+
+      this.onLoad()
+        
     },
 
     methods: {
+         onLoad() {
+    // 查看是否授权
+     let _this=this
+     wx.getSetting({
+      success(res) {
+         
+        if (res.authSetting['scope.userInfo']) {
+          // 已经授权，可以直接调用 getUserInfo 获取头像昵称
+          wx.getUserInfo({
+            success:(res) =>{
+                console.log(res.userInfo,'用户信息')
+              _this.userInfo=res.userInfo
+              _this.getUser()
+            }
+          })
+        }else{
+            _this.userInfo={
+                avatarUrl:'admin'
+            }
+        }
+      }
+    })
+  },
+  bindGetUserInfo: function(e) {
+    console.log(e.detail.userInfo,'????')
+  },
         clickHandle(event) {
             this.msghead = !this.msghead
         },
@@ -186,8 +218,8 @@ export default {
                     number,
                     area,
                     notes,
-                    grade
-                
+                    grade,
+                    avatarUrl:this.userInfo.avatarUrl.slice(20).split('/').join('')
                 }
                 // console.log(this.list,'??sadasd')
                 // this.list.push(p)
@@ -214,7 +246,10 @@ export default {
                     },
                     complete: function() {
                         // complete
-                    }
+                      
+                            wx.hideLoading();    //上传结束，隐藏loading
+                        
+                      }
                     })
                 // wx.request({ 
                 //     data:JSON.stringify(p),
@@ -263,15 +298,19 @@ export default {
          * 获取数据库字段
          */
         getUser(){
-           wx.request({ 
-                    data:JSON.stringify({}),
+       console.log(`${this.userInfo.avatarUrl.slice(20).split('/').join('')}`,'结果')
+               wx.request({ 
+                    
                     method:'get',
-                    url:this.$url+'/api/connecters',
+                    url:this.$url+`/api/connecters/${this.userInfo.avatarUrl.slice(20).split('/').join('')}`,
                     success:res=>{
                         this.list=res.data
                         console.log(res,'2312424')
                     }
                 })
+        
+               
+           
         },
           headimage: function() {   
             var _this = this;

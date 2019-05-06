@@ -8,6 +8,7 @@ const Connecter = mongoose.model('Connecter',new mongoose.Schema({
     notes: String,
     grade: String,
     imgUrl: String,
+    avatarUrl:String,
     date: {
         type:Date,
         default:Date.now()

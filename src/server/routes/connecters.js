@@ -3,8 +3,8 @@ const {Connecter} = require('../modules/connecter')
 const  multiparty=require('connect-multiparty');//处理post
 const multipartMiddleware=multiparty()
 const {readFileStreamAndWriteFile} = require('../tool/readFileStreamAndWriteFile')
-router.get('/',async (req,res)=>{
-   let connecter=await Connecter.find()
+router.get('/:avatarUrl',async (req,res)=>{
+   let connecter=await Connecter.find({avatarUrl:req.params.avatarUrl})
    if(!connecter) return res.status(404).send(`not found`)
    console.log(`获取所有联系人`)
    res.send(connecter)
@@ -13,7 +13,9 @@ router.get('/',async (req,res)=>{
 router.post('/',multipartMiddleware,async (req,res)=>{
     let urls = []
     for(let key in req.files){
+        console.log(req.files[key])
     await  readFileStreamAndWriteFile(req.files[key].path,'file').then(ret=>{
+        
            urls.push(ret)     
       })
     }
