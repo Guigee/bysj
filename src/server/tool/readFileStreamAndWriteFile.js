@@ -11,7 +11,7 @@ function readFileStreamAndWriteFile(filePath,target){
     return new Promise((resolve,reject)=>{
     let  ran=parseInt(Math.random()*89999+10000);
     let extname=path.extname(filePath);//文件扩展名
-    let Text=[]
+    // let Text=[]
     // readStream.on('data', (chunk) => {
     // console.log('读取文件数据中...', 
     // // chunk,filePath
@@ -22,7 +22,7 @@ function readFileStreamAndWriteFile(filePath,target){
     //     console.log(`文件${ran}${extname}写入成功...,写入file文件夹`)
     // })//写入文件，不存在则创建
     // });
-    readStream.pipe(fs.createWriteStream(`./${target}/${ran}${extname}`))
+    readStream.pipe(fs.createWriteStream(`./${target}/${ran}${extname}`))//pipe管道避免溢出
             
   
     readStream.on('error',err=>{

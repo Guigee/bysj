@@ -149,6 +149,7 @@ export default {
             success:(res) =>{
                 console.log(res.userInfo,'用户信息')
               _this.userInfo=res.userInfo
+              _this.userInfo.avatarUrl=_this.userInfo.avatarUrl.slice(20).split('/').join('')
               _this.getUser()
             }
           })
@@ -219,7 +220,7 @@ export default {
                     area,
                     notes,
                     grade,
-                    avatarUrl:this.userInfo.avatarUrl.slice(20).split('/').join('')
+                    avatarUrl:this.userInfo.avatarUrl
                 }
                 // console.log(this.list,'??sadasd')
                 // this.list.push(p)
@@ -298,11 +299,11 @@ export default {
          * 获取数据库字段
          */
         getUser(){
-       console.log(`${this.userInfo.avatarUrl.slice(20).split('/').join('')}`,'结果')
+       console.log(`${this.userInfo.avatarUrl}`,'结果')
                wx.request({ 
                     
                     method:'get',
-                    url:this.$url+`/api/connecters/${this.userInfo.avatarUrl.slice(20).split('/').join('')}`,
+                    url:this.$url+`/api/connecters/${this.userInfo.avatarUrl}`,
                     success:res=>{
                         this.list=res.data
                         console.log(res,'2312424')

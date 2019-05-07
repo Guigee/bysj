@@ -1,7 +1,7 @@
 const express=require('express')
 const app=express()
 const mongoose = require('mongoose')
-
+const album = require('./routes/Album')
 const connecters=require('./routes/connecters')
 
 mongoose.connect('mongodb://localhost/bysj',{useNewUrlParser:true})
@@ -13,5 +13,6 @@ app.use('/api/connecters',connecters)
 app.get('/image/:imgUrl',(req,res)=>{
     res.sendFile(__dirname + `/file/${req.params.imgUrl}`)
 })
+app.user('/api/album',album)
 const port = process.env.port || 3000
 app.listen(port,()=>console.log(`Listening port ${port}`))
