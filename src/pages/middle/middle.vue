@@ -50,7 +50,7 @@
         <div class="j-upload-btn" @click="uploadImg" :style="{'width':width || '120rpx','height':height || '120rpx'}">
             <span class="j-upload-add">+</span>
         </div>
-        <img @click="previewImg(index)" v-for="(src,index) in urls" :key="src" :src="src" :style="{'width':width || '120rpx','height':height || '120rpx'}" class="img" >
+        <img @click="previewImg(index,item)" v-for="(item,index) in urls" :key="item.src" :src="item.src" :style="{'width':width || '120rpx','height':height || '120rpx'}" class="img" >
       </div>
       <div @click="hideEleImgStore" class="backIndex">back</div>
     </div>
@@ -62,7 +62,7 @@
           <div class="j-upload-btn" @click="uploadImg" :style="{'width':width || '120rpx','height':height || '120rpx'}">
               <span class="j-upload-add">+</span>
           </div>
-          <img @click="previewImg(index)" v-for="(src,index) in urls" :key="src" :src="src" :style="{'width':width || '120rpx','height':height || '120rpx'}" class="img" >
+          <img @click="previewImg(index,item)" v-for="(item,index) in urls" :key="item.src" :src="item.src" :style="{'width':width || '120rpx','height':height || '120rpx'}" class="img" >
         </div>
 
         <div class="attention">
@@ -114,11 +114,15 @@
 </template>
  
 <script>
+// import { constants } from 'fs';
     export default {
       props:["width","height","max","srcs"],
       data(){
         return {
           urls: [],
+          userInfo:{
+
+          },
           msg: '留影纪念',
           isTextOne: "我的",
           isTextTwo: "毕业故事",
@@ -134,11 +138,34 @@
           scale: 2
         }
       },
-      // mounted(){
-      //   this.urls = this.\|| [];
-      // },
+      mounted(){
+        // this.urls = this.\|| [];
+        this.onLoad()
+      },
       methods:{
-
+          onLoad() {
+    // 查看是否授权
+     let _this=this
+     wx.getSetting({
+      success(res) {
+         
+        if (res.authSetting['scope.userInfo']) {
+          // 已经授权，可以直接调用 getUserInfo 获取头像昵称
+          wx.getUserInfo({
+            success:(res) =>{
+                console.log(res.userInfo,'用户信息')
+              _this.userInfo=res.userInfo
+              _this.userInfo.avatarUrl=_this.userInfo.avatarUrl.slice(20).split('/').join('')
+            }
+          })
+        }else{
+            _this.userInfo={
+                avatarUrl:'admin'
+            }
+        }
+      }
+    })
+          },
         /**
          * 图片滑动
          */
@@ -171,24 +198,63 @@
             sourceType: ['album', 'camera'],
             success: function (res) {
               res.tempFilePaths.forEach(v=>{
-                that.urls.push(v);
+                that.urls.push({src:v});
               });
+  
+              that.uploadFile(res.tempFilePaths[0],{
+                 avatarUrl:that.userInfo.avatarUrl
+
+              },'/api/album')
+             
               that.$emit("choosed",{all:that.urls,currentUpload:res.tempFilePaths});
             }
           })
         },
-
-        previewImg(index){
+        uploadFile(filePath,option,target){
+               wx.uploadFile({
+                    url:this.$url+target,
+                    filePath:filePath, 
+                    formData:option,
+                    name:'file',
+                    header: { "Content-Type": "multipart/form-data" },
+                    //  formData: {
+                    //    filePath:res.tempFilePaths[0]
+                    //  }, // HTTP 请求中其他额外的 form data
+                    success: function(res){
+                        var resData = res.data;
+                        console.log('上传成功')
+                        // success
+                    },
+                    fail: function(res) {
+                        // fail
+                        var resData =res;
+                    },
+                    complete: function() {
+                        // complete
+                      
+                            wx.hideLoading();    //上传结束，隐藏loading
+                        
+                      }
+                    }) 
+        },
+        previewImg(index,item){
           let that = this;
           wx.showActionSheet({
             itemList:["预览","删除"],
-            success: function(res) {
+            success: (res) =>{
               if(res.tapIndex === 0){
                 wx.previewImage({
                   current:that.urls[index],
                   urls:that.urls
                 });
               } else {
+                wx.request({
+                  method:'delete',
+                  url:this.$url+`/api/album/${item._id}`,
+                  success:(res)=>{
+                    console.log(`删除照片成功`)
+                  }
+                })
                 that.urls.splice(index,1);
                 that.$emit("delete",that.urls);
               }
@@ -199,6 +265,17 @@
 
         showEleImgStore() {
           this.showImgStore = !this.showImgStore
+          wx.request({
+             method:'get',
+             url:this.$url+`/api/album/${this.userInfo.avatarUrl}`,
+             success: (res)=>{
+                 this.urls=[]
+                 res.data.forEach(item=>{
+                   this.urls.push({...item,src:this.$url+`/image/${item.imgUrl}`})
+                   console.log(this.urls)
+                 })
+             }
+          })
         },
 
         hideEleImgStore() {

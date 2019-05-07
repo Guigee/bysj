@@ -89,7 +89,6 @@
 <script>
 import listitem from '../../components/listitem.vue'
 import { setTimeout } from 'timers';
-
 export default {
     data() {
         return {
@@ -325,7 +324,7 @@ export default {
                 // 指定来源是相册还是相机，默认两个都有    
                 success: function(res) { 
                     
-                    var tempFilePaths = res.tempFilePaths 
+                    var tempFilePaths = res.tempFilePaths
                      
                         _this.head = tempFilePaths
                         console.log(res.tempFilePaths[0],'文件路径')

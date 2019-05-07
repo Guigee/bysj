@@ -13,6 +13,6 @@ app.use('/api/connecters',connecters)
 app.get('/image/:imgUrl',(req,res)=>{
     res.sendFile(__dirname + `/file/${req.params.imgUrl}`)
 })
-app.user('/api/album',album)
+app.use('/api/album',album)
 const port = process.env.port || 3000
 app.listen(port,()=>console.log(`Listening port ${port}`))

@@ -31,7 +31,7 @@ function readFileStreamAndWriteFile(filePath,target){
     readStream.on('close',()=>{
     console.log(`读取完成...`)
     resolve(`${ran}${extname}`)
-        console.log(`文件${ran}${extname}写入成功...,写入file文件夹`)
+        console.log(`文件${ran}${extname}写入成功...,写入${target}文件夹`)
     
     })
     readStream.on('open',()=>{
