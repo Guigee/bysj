@@ -2,6 +2,8 @@ const router = require( 'express' ).Router()
 const {Connecter} = require('../modules/connecter')
 const  multiparty=require('connect-multiparty');//处理post
 const multipartMiddleware=multiparty()
+const fs=require('fs')
+const path = require('path')
 const {readFileStreamAndWriteFile} = require('../tool/readFileStreamAndWriteFile')
 router.get('/:avatarUrl',async (req,res)=>{
    let connecter=await Connecter.find({avatarUrl:req.params.avatarUrl})
@@ -25,9 +27,14 @@ router.post('/',multipartMiddleware,async (req,res)=>{
 })
 router.delete('/:id',async (req,res)=>{
     console.log(`id为${req.params.id}的联系人被删除`)
-    const connecter = await Connecter.findOneAndDelete(req.params.id);
+    const connecter = await Connecter.findByIdAndDelete(req.params.id);
+    
+    let curPath=__dirname.split('\\')
+    fs.unlinkSync(path.join(`${curPath.slice(0,curPath.length-1).join('\\')}/file/${connecter.imgUrl}`),(err)=>{
+        if(err) throw err
+    })
     if(!connecter) return res.status(404).send(`not found with this id`)
-
+//   console.log(connecter)
     res.send(connecter)
 })
 
