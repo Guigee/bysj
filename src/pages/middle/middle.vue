@@ -27,7 +27,7 @@
         <div class="story-create-selectimg">
           <img class="story-img" src="../../../static/images/img-story-create.jpg" >
           <div class="story-create-text">
-            <p class="line-one">请上传6张</p>
+            <p class="line-one">请上传5张</p>
             <p class="line-one">你觉得毕业时最有意思的照片吧</p>
             <p class="line-two">你的毕业故事</p>
             <p class="line-two">很快就可以生成哦</p>
@@ -126,6 +126,7 @@
           <span class="backIndex" @click="closeGradeStory">取消制作</span>
           <span class="backIndex" @click="indexBack" v-if="isBack">上一页</span>
           <span class="backIndex" @click="indexNext" v-if="isNext">下一页</span>
+          <span class="backIndex">提交</span>
         </div>
       </div>
       
@@ -160,6 +161,7 @@
           <span class="backIndex" @click="closeGradeStory">取消制作</span>
           <span class="backIndex" @click="indexBack" v-if="isBack">上一页</span>
           <span class="backIndex" @click="indexNext" v-if="isNext">下一页</span>
+          <span class="backIndex">提交</span>
         </div>
       </div>
 
@@ -194,6 +196,7 @@
           <span class="backIndex" @click="closeGradeStory">取消制作</span>
           <span class="backIndex" @click="indexBack" v-if="isBack">上一页</span>
           <span class="backIndex" @click="indexNext" v-if="isNext">下一页</span>
+          <span class="backIndex">提交</span>
         </div>
       </div>
 
@@ -229,6 +232,7 @@
           <span class="backIndex" @click="closeGradeStory">取消制作</span>
           <span class="backIndex" @click="indexBack" v-if="isBack">上一页</span>
           <span class="backIndex" @click="indexNext" v-if="isNext">下一页</span>
+          <span class="backIndex">提交</span>
         </div>
       </div>
 
@@ -241,6 +245,7 @@
         <span class="backIndex" @click="closeGradeStory">取消制作</span>
         <span class="backIndex" @click="indexBack" v-if="isBack">上一页</span>
         <span class="backIndex" @click="indexNext" v-if="isNext">下一页</span>
+        <span class="backIndex">提交</span>
       </div>
     </div>
   </div>
