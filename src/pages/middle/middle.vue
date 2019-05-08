@@ -82,32 +82,165 @@
 
       <!--毕业故事制作页面 -->
     <div class="grade-story-diy" v-if="showGradeStory">
-      <view class="page-section">
-        <div class="page-section-text">
-          <p class="text-one">{{isTextOne}}</p>
-          <p class="text-one">{{isTextTwo}}</p>
-          <div class="page-section-text-two">
-            <p class="text-two">{{isTextThree}}</p>
-          </div>
-        </div>
 
-        <movable-area scale-area>
-          <!-- <div class="testOne"></div> -->
-          <movable-view direction="all" bindchange="onChange" bindscale="onScale" scale scale-min="0.5" scale-max="4" :scale-value="scale">
-            <img src="../../../static/images/headPhoto.jpg" class="diyimg">
-          </movable-view>
-        </movable-area>
-      </view>
-      <div class="changeText" v-if="isShowText">
-        <input type="text" v-model="isTextOne">
-        <input type="text" v-model="isTextTwo">
-        <input type="text" v-model="isTextThree">
-        <span @click="closeChangeText">提交</span>
+      <!-- test -->
+        <!-- <div v-if="numberArr.length == 0">{{showMessage}}</div>
+        <div class="container" v-for="(item, index) in getCurPageContent(numberArr, curPage, itemNumPerPage)" :key="index">
+          <div class="content">{{item}}</div>
+          <div class="pageButtonList">
+            <button class="leftBtn" @click="handleClick('leftBtn')">上一页</button>
+            <span class="pagination">{{curPage}}/{{totalPage}}</span>
+            <button class="rightBtn" @click="handleClick('rightBtn')">下一页</button>
+          </div>
+        </div> -->
+      
+
+      <!-- 第一页 -->
+      <div class="index-one" v-if="isIndex===1">
+        1
+        <view class="page-section">
+          <div class="page-section-text">
+            <p class="text-one">{{isTextOne}}</p>
+            <p class="text-one">{{isTextTwo}}</p>
+            <div class="page-section-text-two">
+              <p class="text-two">{{isTextThree}}</p>
+            </div>
+          </div>
+
+          <movable-area scale-area>
+            <!-- <div class="testOne"></div> -->
+            <movable-view direction="all" bindchange="onChange" bindscale="onScale" scale scale-min="0.5" scale-max="4" :scale-value="scale">
+              <img src="../../../static/images/headPhoto.jpg" class="diyimg">
+            </movable-view>
+          </movable-area>
+        </view>
+        <div class="changeText" v-if="isShowText">
+          <input type="text" v-model="isTextOne">
+          <input type="text" v-model="isTextTwo">
+          <input type="text" v-model="isTextThree">
+          <span @click="closeChangeText">提交</span>
+        </div>
+        <div class="dom-text" v-if="isDom">
+          <span class="backIndex" @click="showChangeText">修改文字</span>
+          <span class="backIndex" @click="resetGradeStory">重新制作</span>
+          <span class="backIndex" @click="closeGradeStory">取消制作</span>
+          <span class="backIndex" @click="indexBack" v-if="isBack">上一页</span>
+          <span class="backIndex" @click="indexNext" v-if="isNext">下一页</span>
+        </div>
       </div>
-      <div class="dom-text" v-if="isDom">
+      
+      <!-- 第二页 -->
+      <div class="index-two" v-if="isIndex===2">
+        2
+        <view class="page-section">
+          <div class="page-section-texttwo">
+            <p>{{twoisTextOne}}</p>
+            <p>{{twoisTextTwo}}</p>
+            <p>{{twoisTextThree}}</p>
+            <p>{{twoisTextFour}}</p>
+          </div>
+
+          <movable-area scale-area class="area-two">
+            <!-- <div class="testOne"></div> -->
+            <movable-view class="view-two" direction="all" bindchange="onChange" bindscale="onScale" scale scale-min="0.5" scale-max="4" :scale-value="scale">
+              <img src="../../../static/images/headPhoto.jpg" class="diyimg diyimg-two">
+            </movable-view>
+          </movable-area>
+        </view>
+        <div class="changeText" v-if="isShowText">
+          <input type="text" v-model="twoisTextOne">
+          <input type="text" v-model="twoisTextTwo">
+          <input type="text" v-model="twoisTextThree">
+          <input type="text" v-model="twoisTextFour">
+          <span @click="closeChangeText">提交</span>
+        </div>
+        <div class="dom-text" v-if="isDom">
+          <span class="backIndex" @click="showChangeText">修改文字</span>
+          <span class="backIndex" @click="resetGradeStory">重新制作</span>
+          <span class="backIndex" @click="closeGradeStory">取消制作</span>
+          <span class="backIndex" @click="indexBack" v-if="isBack">上一页</span>
+          <span class="backIndex" @click="indexNext" v-if="isNext">下一页</span>
+        </div>
+      </div>
+
+      <!-- 第三页 -->
+      <div class="index-three" v-if="isIndex===3">
+        3
+        <view class="page-section">
+
+          <movable-area scale-area class="area-three">
+            <!-- <div class="testOne"></div> -->
+            <movable-view class="view-three" direction="all" bindchange="onChange" bindscale="onScale" scale scale-min="0.5" scale-max="4" :scale-value="scale">
+              <img src="../../../static/images/headPhoto.jpg" class="diyimg diyimg-three">
+            </movable-view>
+          </movable-area>
+
+          <div class="page-section-textthree">
+            <p>{{threeisTextOne}}</p>
+            <p>{{threeisTextTwo}}</p>
+            <p>{{threeisTextThree}}</p>
+            <span class="love"></span>
+          </div>
+        </view>
+        <div class="changeText" v-if="isShowText">
+          <input type="text" v-model="threeisTextOne">
+          <input type="text" v-model="threeisTextTwo">
+          <input type="text" v-model="threeisTextThree">
+          <span @click="closeChangeText">提交</span>
+        </div>
+        <div class="dom-text" v-if="isDom">
+          <span class="backIndex" @click="showChangeText">修改文字</span>
+          <span class="backIndex" @click="resetGradeStory">重新制作</span>
+          <span class="backIndex" @click="closeGradeStory">取消制作</span>
+          <span class="backIndex" @click="indexBack" v-if="isBack">上一页</span>
+          <span class="backIndex" @click="indexNext" v-if="isNext">下一页</span>
+        </div>
+      </div>
+
+      <!-- 第四页 -->
+      <div class="index-four" v-if="isIndex===4">
+        4
+        <view class="page-section">
+          
+          <movable-area scale-area class="area-four">
+            <!-- <div class="testOne"></div> -->
+            <movable-view class="view-four" direction="all" bindchange="onChange" bindscale="onScale" scale scale-min="0.5" scale-max="4" :scale-value="scale">
+              <img src="../../../static/images/headPhoto.jpg" class="diyimg diyimg-four">
+            </movable-view>
+          </movable-area>
+          <div class="page-section-textfour">
+            <h1>HAPPY</h1>
+            <p>{{fourisTextOne}}</p>
+            <p>{{fourisTextTwo}}</p>
+            <p>{{fourisTextThree}}</p>
+            <p>{{fourisTextFour}}</p>
+          </div>
+        </view>
+        <div class="changeText" v-if="isShowText">
+          <input type="text" v-model="fourisTextOne">
+          <input type="text" v-model="fourisTextTwo">
+          <input type="text" v-model="fourisTextThree">
+          <input type="text" v-model="fourisTextFour">
+          <span @click="closeChangeText">提交</span>
+        </div>
+        <div class="dom-text" v-if="isDom">
+          <span class="backIndex" @click="showChangeText">修改文字</span>
+          <span class="backIndex" @click="resetGradeStory">重新制作</span>
+          <span class="backIndex" @click="closeGradeStory">取消制作</span>
+          <span class="backIndex" @click="indexBack" v-if="isBack">上一页</span>
+          <span class="backIndex" @click="indexNext" v-if="isNext">下一页</span>
+        </div>
+      </div>
+
+      <!-- 第五页 -->
+      <div class="index-five" v-if="isIndex===5">
+        5
+        text
         <span class="backIndex" @click="showChangeText">修改文字</span>
         <span class="backIndex" @click="resetGradeStory">重新制作</span>
         <span class="backIndex" @click="closeGradeStory">取消制作</span>
+        <span class="backIndex" @click="indexBack" v-if="isBack">上一页</span>
+        <span class="backIndex" @click="indexNext" v-if="isNext">下一页</span>
       </div>
     </div>
   </div>
@@ -127,12 +260,30 @@
           isTextOne: "我的",
           isTextTwo: "毕业故事",
           isTextThree: "星星 著",
+
+          twoisTextOne: "新生的第一次见面",
+          twoisTextTwo: "在学校的400米操场",
+          twoisTextThree: "听着开学典礼的阵阵言语",
+          twoisTextFour: "开始憧憬一个美好的大学梦",
+
+          threeisTextOne: "班级的第一次聚会",
+          threeisTextTwo: "紧张的只敢喝杯中的水",
+          threeisTextThree: "慌乱的间隙 无意中瞥见了TA",
+
+          fourisTextOne: "课堂的欢乐",
+          fourisTextTwo: "让我们倍加珍惜学校的时光",
+          fourisTextThree: "时光匆匆，略过青涩的我们",
+          fourisTextFour: "往事不再，终将走向终点",
+
+          isIndex: 1,
           showImgStore: false,
           showStory: false,
           showImgSelect: false,
           showGradeStory: false,
           isShowText: false,
           isDom: true,
+          isBack: true,
+          isNext: true,
           x: 0,
           y: 0,
           scale: 2
@@ -278,6 +429,25 @@
           })
         },
 
+        indexBack() {
+          this.isIndex = this.isIndex - 1
+          
+          if(this.isIndex===0) {
+            this.isBack = false
+          } else {
+            this.isBack = true
+          }
+        },
+
+        indexNext() {
+          this.isIndex = this.isIndex + 1
+          if(this.isIndex===6) {
+            this.isNext = false
+          } else {
+            this.isNext = true
+          }
+        },
+
         hideEleImgStore() {
           this.showImgStore = false
           this.showImgSelect = false
@@ -317,7 +487,29 @@
         closeChangeText() {
           this.isShowText = false
           this.isDom = true
-        }
+        },
+
+        // test
+        // init(){
+        //   this.totalPage = Math.ceil(this.numberArr.length / this.itemNumPerPage)
+        //   this.totalPage = this.totalPage < 1 ? 1 : this.totalPage
+        // },
+        // getCurPageContent: function(numberArr, curPage, itemNumPerPage){
+        //   return numberArr.filter(function(element, index){
+        //     if(index >= (curPage -1)* itemNumPerPage && index < curPage *itemNumPerPage){
+        //       return true
+        //     }else{
+        //       return false
+        //     }
+        //   })
+        // },
+        // handleClick: function(arg){
+        //   if(arg == 'leftBtn'){
+        //     this.curPage = this.curPage > 1 ? --this.curPage : this.totalPage
+        //   }else if (arg == 'rightBtn'){
+        //     this.curPage = this.curPage < this.totalPage ? ++this.curPage: 1
+        //   }
+        // }
       }
     }
 </script>
@@ -556,6 +748,7 @@
       border-radius: 10px;
       font-weight: blod;
       margin-right: 5px;
+      font-size: 12px;
     }
     .attention-one {
       border: 1px solid #888888;
@@ -664,5 +857,114 @@
       bottom: 0;
       width: 100%;
       background: #fff;
+    }
+
+    /* 第二页 */
+    .page-section-texttwo {
+      font-size: 12px;
+      line-height: 12px;
+      color: black;
+      margin-top: 35px;
+      width: 300px;
+      height: 150px;
+    }
+    .page-section-texttwo p {
+      text-align: center;
+      padding: 5px;
+    }
+    .area-two {
+      top: 190px;
+      height: 250px;
+      border: 1rpx solid  burlywood;
+      border-radius: 10px;
+    }
+    .view-two {
+      width: 300rpx;
+      height: 200rpx; 
+    }
+    .diyimg-two {
+      border: 1rpx solid  burlywood;
+      border-radius: 10px;
+      width: 300rpx;
+      height: 200rpx;
+    }
+
+    /* 第三页 */
+    .page-section-textthree {
+      float: right;
+      position: relative;
+      font-size: 12px;
+      line-height: 12px;
+      color: black;
+      margin-top: 35px;
+      width: 100px;
+      height: 150px;
+      top: 90px;
+      right: 10px;
+    }
+    .page-section-textthree p {
+      padding: 5px;
+    }
+    .area-three {
+      top: 80px;
+      height: 300px;
+      width: 300rpx;
+      box-shadow: 10px 10px 5px #aaaaaa;
+      border: 1rpx solid #aaaaaa;
+    }
+    .view-three {
+      width: 300rpx;
+      height: 200px;
+    }
+    .diyimg-three {
+      border: 1rpx solid  burlywood;
+      width: 300rpx;
+      height: 200px;
+    }
+    .love {
+      display: block;
+      background-image: url(../../../static/images/love.png);
+      width: 80px;
+      height: 80px;
+      background-size: 80px 80px;
+      background-repeat: no-repeat;
+      margin-top: 20px;
+    }
+
+    /* 第四页 */
+    .page-section-textfour {
+      position: relative;
+      margin-top: 210px;
+      margin-right: 50px;
+      width: 200px;
+      height: 150px;
+      left: 100px;
+    }
+    .page-section-textfour h1 {
+      font-size: 40px;
+      line-height: 40px;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin-bottom: 5px;
+      color: #ca1313;
+    }
+    .page-section-textfour p {
+      font-size: 13px;
+      line-height: 13px;
+      color: black;
+      padding: 5px;
+    }
+    .area-four {
+      top: 60px;
+      height: 200px;
+      width: 500rpx;
+    }
+    .view-four {
+      width: 400rpx;
+      height: 150px;
+    }
+    .diyimg-four {
+      border: 1rpx solid  burlywood;
+      width: 400rpx;
+      height: 150px;
     }
 </style>

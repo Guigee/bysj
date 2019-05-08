@@ -7,7 +7,9 @@
                 <span class="add" @click="showadd"></span>
             </a>
         </div>
-
+        <button open-type="getUserInfo" lang="zh_CN">
+            获取用户信息
+        </button>
         <!-- 无好友图标 -->
         <div class="no-person" v-if="isPersonList">
             <img src="../../../static/images/noaddress.png" class="no-address"/>
@@ -141,7 +143,7 @@ export default {
      let _this=this
      wx.getSetting({
       success(res) {
-         
+         wx.getUserInfo()
         if (res.authSetting['scope.userInfo']) {
           // 已经授权，可以直接调用 getUserInfo 获取头像昵称
           wx.getUserInfo({
@@ -156,6 +158,7 @@ export default {
             _this.userInfo={
                 avatarUrl:'admin'
             }
+             _this.getUser()
         }
       }
     })
