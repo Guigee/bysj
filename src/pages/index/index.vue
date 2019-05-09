@@ -124,7 +124,11 @@ export default {
             return this.msghead ? '通讯录' : '点击右侧添加好友名片'
         },
     },
-
+    watch : {
+       msg(nVal,oVal){
+           if(nVal==='通讯录') this.getUser()
+       }
+    },
     mounted(){
        
         if(!this.list.length){
@@ -134,7 +138,9 @@ export default {
       this.onLoad()
         
     },
-
+    activated() {
+        console.log('asdas')
+    },
     methods: {
          onLoad() {
     // 查看是否授权
@@ -235,9 +241,10 @@ export default {
                     //  formData: {
                     //    filePath:res.tempFilePaths[0]
                     //  }, // HTTP 请求中其他额外的 form data
-                    success: function(res){
+                    success: (res)=>{
                         var resData = res.data;
                         console.log('上传成功')
+                        this.getUser()
                         // success
                     },
                     fail: function(res) {
