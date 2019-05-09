@@ -7,7 +7,9 @@
                 <span class="add" @click="showadd"></span>
             </a>
         </div>
-
+        <button open-type="getUserInfo" lang="zh_CN" class="hideuserInfo">
+            获取用户信息
+        </button>
         <!-- 无好友图标 -->
         <div class="no-person" v-if="isPersonList">
             <img src="../../../static/images/noaddress.png" class="no-address"/>
@@ -68,7 +70,7 @@
                 
             </div>
             <div class="notestyle">好友留言：{{list[index].notes}}</div>
-            <div class="min">发消息</div>
+            <!-- <div class="min">发消息</div> -->
             <div @click="closedetail" class="min">关闭</div>
         </div>
 
@@ -147,7 +149,7 @@ export default {
      let _this=this
      wx.getSetting({
       success(res) {
-         
+         wx.getUserInfo()
         if (res.authSetting['scope.userInfo']) {
           // 已经授权，可以直接调用 getUserInfo 获取头像昵称
           wx.getUserInfo({
@@ -162,6 +164,7 @@ export default {
             _this.userInfo={
                 avatarUrl:'admin'
             }
+             _this.getUser()
         }
       }
     })
@@ -569,5 +572,8 @@ export default {
         background-repeat: no-repeat;
         margin-left: 5px;
         vertical-align: middle;
+    }
+    .hideuserInfo {
+        display: none;
     }
 </style>
