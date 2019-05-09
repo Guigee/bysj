@@ -110,7 +110,7 @@
           <movable-area scale-area>
             <!-- <div class="testOne"></div> -->
             <movable-view direction="all" bindchange="onChange" bindscale="onScale" scale scale-min="0.5" scale-max="4" :scale-value="scale">
-              <img src="../../../static/images/headPhoto.jpg" class="diyimg">
+              <img :src="urls[isIndex-1].src" class="diyimg">
             </movable-view>
           </movable-area>
         </view>
@@ -144,7 +144,7 @@
           <movable-area scale-area class="area-two">
             <!-- <div class="testOne"></div> -->
             <movable-view class="view-two" direction="all" bindchange="onChange" bindscale="onScale" scale scale-min="0.5" scale-max="4" :scale-value="scale">
-              <img src="../../../static/images/headPhoto.jpg" class="diyimg diyimg-two">
+              <img :src="urls[isIndex-1].src" class="diyimg diyimg-two">
             </movable-view>
           </movable-area>
         </view>
@@ -173,7 +173,7 @@
           <movable-area scale-area class="area-three">
             <!-- <div class="testOne"></div> -->
             <movable-view class="view-three" direction="all" bindchange="onChange" bindscale="onScale" scale scale-min="0.5" scale-max="4" :scale-value="scale">
-              <img src="../../../static/images/headPhoto.jpg" class="diyimg diyimg-three">
+              <img :src="urls[isIndex-1].src" class="diyimg diyimg-three">
             </movable-view>
           </movable-area>
 
@@ -208,7 +208,7 @@
           <movable-area scale-area class="area-four">
             <!-- <div class="testOne"></div> -->
             <movable-view class="view-four" direction="all" bindchange="onChange" bindscale="onScale" scale scale-min="0.5" scale-max="4" :scale-value="scale">
-              <img src="../../../static/images/headPhoto.jpg" class="diyimg diyimg-four">
+              <img :src="urls[isIndex-1].src" class="diyimg diyimg-four">
             </movable-view>
           </movable-area>
           <div class="page-section-textfour">
@@ -243,7 +243,7 @@
           
           <movable-area scale-area class="area-five">
             <movable-view class="view-five" direction="all" scale scale-min="0.5" scale-max="4" :scale-value="scale">
-              <img src="../../../static/images/headPhoto.jpg" class="diyimg diyimg-five">
+              <img :src="urls[isIndex-1].src" class="diyimg diyimg-five">
             </movable-view>
           </movable-area>
           <div class="page-section-textfive">
@@ -282,7 +282,6 @@
       data(){
         return {
           urls: [],
-          num : 0,
           userInfo:{
 
           },
@@ -329,6 +328,18 @@
         this.onLoad()
       },
       methods:{
+    updatedPPt(id){
+          wx.request({
+                  method:'put',
+                  url:this.$url+`/api/graduationAlbum/${id}`,
+                  data:{
+                     
+                  },
+                  success:(res)=>{
+                    console.log(`删除照片成功`)
+                  }
+                })
+    },
           onLoad() {
     // 查看是否授权
      let _this=this
@@ -386,8 +397,8 @@
               res.tempFilePaths.forEach(v=>{
                 that.urls.push({src:v});
               });
-              that.num += res.tempFilePaths.length;
-              that.uploadFile(res.tempFilePaths,{
+             that.num+= res.tempFilePaths.length
+              that.uploadFile(res.tempFilePaths[0],{
                  avatarUrl:that.userInfo.avatarUrl
 
               },target)
@@ -397,10 +408,9 @@
           })
         },
         uploadFile(filePath,option,target){
-              for(let key in filePath){
-                   wx.uploadFile({
+               wx.uploadFile({
                     url:this.$url+target,
-                    filePath:filePath[key], 
+                    filePath:filePath, 
                     formData:option,
                     name:'file',
                     header: { "Content-Type": "multipart/form-data" },
@@ -422,8 +432,7 @@
                             wx.hideLoading();    //上传结束，隐藏loading
                         
                       }
-                    })       
-              } 
+                    }) 
         },
         previewImg(index,item){
           let that = this;
@@ -432,8 +441,8 @@
             success: (res) =>{
               if(res.tapIndex === 0){
                 wx.previewImage({
-                  current:that.urls[index].src,
-                  urls:that.urls.map(item=>item.src)
+                  current:that.urls[index],
+                  urls:that.urls
                 });
               } else {
                 wx.request({
@@ -492,8 +501,8 @@
 
         showStoryCreate() {
           this.showStory = true
+          this.num=0;
           this.urls=[]
-          this.num=0
         },
 
         closeStoryCreate() {
@@ -505,17 +514,17 @@
         },
 
         showGrade() {
-          this.showGradeStory = true
+          this.urls=[]
           wx.request({
-             method:'get',
-             url:this.$url+`/api/graduationAlbum/${this.userInfo.avatarUrl}/${this.num}`,
-             success: (res)=>{
-                 this.urls=[]
-                 this.num=0
+            method:'get',
+            url:this.$url+`/api/graduationAlbum/${this.userInfo.avatarUrl}/${this.num}`,
+            success:(res)=>{
                  res.data.forEach(item=>{
-                   this.urls.shift({...item,src:this.$url+`/image/${item.imgUrl}`})
+                   this.urls.unshift({...item,src:this.$url+`/image/${item.imgUrl}`})
                  })
-             }
+                 
+                 this.showGradeStory = true
+            }
           })
         },
 
