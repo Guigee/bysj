@@ -37,4 +37,15 @@ router.post('/',multipartMiddleware,async (req,res)=>{
     // console.log(graduationAlbum)
     res.send(graduationAlbum)
 })
+router.put('/:id',async (req,res)=>{
+    // const { error } = validateGenre(req.body)
+    // if (error) return res.status(400).send(error.details[0].message);
+
+    const graduationAlbum = await GraduationAlbum.findByIdAndUpdate(req.params.id, req.body ,  { 
+         new:true
+    });
+    //if update error ${genre} will be false
+    if(!graduationAlbum) return res.status(404).send(`The Genre with the given ID not found`)
+    res.send(graduationAlbum)
+})
 module.exports = router
