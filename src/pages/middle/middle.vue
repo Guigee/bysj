@@ -47,7 +47,7 @@
         <div class="title">电子相册</div>
       </div>
       <div class="j-pic-upload">
-        <div class="j-upload-btn" @click="uploadImg" :style="{'width':width || '120rpx','height':height || '120rpx'}">
+        <div class="j-upload-btn" @click="uploadImg('/api/album')" :style="{'width':width || '120rpx','height':height || '120rpx'}">
             <span class="j-upload-add">+</span>
         </div>
         <img @click="previewImg(index,item)" v-for="(item,index) in urls" :key="item.src" :src="item.src" :style="{'width':width || '120rpx','height':height || '120rpx'}" class="img" >
@@ -59,7 +59,7 @@
     <div class="img-select-index" v-if="showImgSelect">
       <div class="img-select-box">
         <div class="j-pic-upload">
-          <div class="j-upload-btn" @click="uploadImg" :style="{'width':width || '120rpx','height':height || '120rpx'}">
+          <div class="j-upload-btn" @click="uploadImg('/api/graduationAlbum')" :style="{'width':width || '120rpx','height':height || '120rpx'}">
               <span class="j-upload-add">+</span>
           </div>
           <img @click="previewImg(index,item)" v-for="(item,index) in urls" :key="item.src" :src="item.src" :style="{'width':width || '120rpx','height':height || '120rpx'}" class="img" >
@@ -94,7 +94,7 @@
         <movable-area scale-area>
           <!-- <div class="testOne"></div> -->
           <movable-view direction="all" bindchange="onChange" bindscale="onScale" scale scale-min="0.5" scale-max="4" :scale-value="scale">
-            <img src="../../../static/images/headPhoto.jpg" class="diyimg">
+            <img :src="urls[0].src" class="diyimg">
           </movable-view>
         </movable-area>
       </view>
@@ -120,6 +120,7 @@
       data(){
         return {
           urls: [],
+          num : 0,
           userInfo:{
 
           },
@@ -190,7 +191,7 @@
         /**
          * 电子相册的js方法
          */
-        uploadImg(){
+        uploadImg(target){
           let that = this;
           wx.chooseImage({
             count: that.max || 3,
@@ -200,20 +201,21 @@
               res.tempFilePaths.forEach(v=>{
                 that.urls.push({src:v});
               });
-  
-              that.uploadFile(res.tempFilePaths[0],{
+              that.num += res.tempFilePaths.length;
+              that.uploadFile(res.tempFilePaths,{
                  avatarUrl:that.userInfo.avatarUrl
 
-              },'/api/album')
+              },target)
              
               that.$emit("choosed",{all:that.urls,currentUpload:res.tempFilePaths});
             }
           })
         },
         uploadFile(filePath,option,target){
-               wx.uploadFile({
+              for(let key in filePath){
+                   wx.uploadFile({
                     url:this.$url+target,
-                    filePath:filePath, 
+                    filePath:filePath[key], 
                     formData:option,
                     name:'file',
                     header: { "Content-Type": "multipart/form-data" },
@@ -235,7 +237,8 @@
                             wx.hideLoading();    //上传结束，隐藏loading
                         
                       }
-                    }) 
+                    })       
+              } 
         },
         previewImg(index,item){
           let that = this;
@@ -244,8 +247,8 @@
             success: (res) =>{
               if(res.tapIndex === 0){
                 wx.previewImage({
-                  current:that.urls[index],
-                  urls:that.urls
+                  current:that.urls[index].src,
+                  urls:that.urls.map(item=>item.src)
                 });
               } else {
                 wx.request({
@@ -285,6 +288,8 @@
 
         showStoryCreate() {
           this.showStory = true
+          this.urls=[]
+          this.num=0
         },
 
         closeStoryCreate() {
@@ -297,6 +302,17 @@
 
         showGrade() {
           this.showGradeStory = true
+          wx.request({
+             method:'get',
+             url:this.$url+`/api/graduationAlbum/${this.userInfo.avatarUrl}/${this.num}`,
+             success: (res)=>{
+                 this.urls=[]
+                 this.num=0
+                 res.data.forEach(item=>{
+                   this.urls.shift({...item,src:this.$url+`/image/${item.imgUrl}`})
+                 })
+             }
+          })
         },
 
         resetGradeStory() {
