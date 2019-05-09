@@ -239,13 +239,37 @@
       <!-- 第五页 -->
       <div class="index-five" v-if="isIndex===5">
         5
-        text
-        <span class="backIndex" @click="showChangeText">修改文字</span>
-        <span class="backIndex" @click="resetGradeStory">重新制作</span>
-        <span class="backIndex" @click="closeGradeStory">取消制作</span>
-        <span class="backIndex" @click="indexBack" v-if="isBack">上一页</span>
-        <span class="backIndex" @click="indexNext" v-if="isNext">下一页</span>
-        <span class="backIndex">提交</span>
+        <view class="page-section">
+          
+          <movable-area scale-area class="area-five">
+            <movable-view class="view-five" direction="all" scale scale-min="0.5" scale-max="4" :scale-value="scale">
+              <img src="../../../static/images/headPhoto.jpg" class="diyimg diyimg-five">
+            </movable-view>
+          </movable-area>
+          <div class="page-section-textfive">
+            <h1>Memory</h1>
+            <p>{{fiveisTextOne}}</p>
+            <p>{{fiveisTextTwo}}</p>
+            <p>{{fiveisTextThree}}</p>
+            <p>{{fiveisTextFour}}</p>
+          </div>
+        </view>
+        <div class="changeText" v-if="isShowText">
+          <input type="text" v-model="fiveisTextOne">
+          <input type="text" v-model="fiveisTextTwo">
+          <input type="text" v-model="fiveisTextThree">
+          <input type="text" v-model="fiveisTextFour">
+          <span @click="closeChangeText">提交</span>
+        </div>
+        <div class="dom-text" v-if="isDom">
+          <span class="backIndex" @click="showChangeText">修改文字</span>
+          <span class="backIndex" @click="resetGradeStory">重新制作</span>
+          <span class="backIndex" @click="closeGradeStory">取消制作</span>
+          <span class="backIndex" @click="indexBack" v-if="isBack">上一页</span>
+          <span class="backIndex" @click="indexNext" v-if="isNext">下一页</span>
+          <span class="backIndex">提交</span>
+        </div>
+        
       </div>
     </div>
   </div>
@@ -279,6 +303,11 @@
           fourisTextTwo: "让我们倍加珍惜学校的时光",
           fourisTextThree: "时光匆匆，略过青涩的我们",
           fourisTextFour: "往事不再，终将走向终点",
+
+          fiveisTextOne: "终于到了离别的这一天" ,
+          fiveisTextTwo: "大学让我拥有了无数回不去的时光",
+          fiveisTextThree: "接下来的路，也要好好走",
+          fiveisTextFour: "毕业快乐",
 
           isIndex: 1,
           showImgStore: false,
@@ -971,5 +1000,32 @@
       border: 1rpx solid  burlywood;
       width: 400rpx;
       height: 150px;
+    }
+
+    /* 第五页 */
+    .area-five {
+      width: 590rpx;
+      margin: 0;
+      top: 120rpx;
+    }
+    .page-section-textfive {
+      position: relative;
+      top: 440rpx;
+      font-size: 15px;
+      line-height: 15px;
+      width: 480rpx;
+      height: 320rpx;
+      border: 1rpx solid black;
+      margin: 0 auto;
+      text-align: center;
+    }
+    .page-section-textfive h1 {
+      font-size: 35px;
+      line-height: 35px;
+      color: rgb(139,117,0);
+      margin-bottom: 5px;
+    }
+    .page-section-textfive p{
+      padding: 3px;
     }
 </style>
