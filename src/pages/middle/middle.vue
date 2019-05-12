@@ -17,7 +17,7 @@
       <div class="middle-create-enter" @click="showStoryCreate">开始制作</div>
       <div class="middle-create-info">
         <span class="middle-create-info-img" @click="showEleImgStore"><span class="img-book"></span>我的电子相册</span>
-        <span class="middle-create-info-store"><span class="img-person"></span>我的毕业故事</span>
+        <span class="middle-create-info-store" @click="imgStorySubmit"><span class="img-person"></span>我的毕业故事</span>
       </div>
     </div>
 
@@ -74,26 +74,37 @@
 
       <div class="img-submit">
         <span @click="hideEleImgStore" class="backIndex">取消上传</span>
+        <span class="backIndex" @click="showSelectModel">选择制作模版</span>
         <span class="submit-btn" @click="showGrade">
           提交
         </span>
       </div>
     </div>
 
-      <!--毕业故事制作页面 -->
-    <div class="grade-story-diy" v-if="showGradeStory">
+    <!-- 模版选择页面 -->
+    <div class="select-model" v-if="ismodel">
+    
+      <div class="model-one" :class="{'border-model':isborderone}" @click="borderone">模版一</div>
 
-      <!-- test -->
-        <!-- <div v-if="numberArr.length == 0">{{showMessage}}</div>
-        <div class="container" v-for="(item, index) in getCurPageContent(numberArr, curPage, itemNumPerPage)" :key="index">
-          <div class="content">{{item}}</div>
-          <div class="pageButtonList">
-            <button class="leftBtn" @click="handleClick('leftBtn')">上一页</button>
-            <span class="pagination">{{curPage}}/{{totalPage}}</span>
-            <button class="rightBtn" @click="handleClick('rightBtn')">下一页</button>
-          </div>
-        </div> -->
-      
+      <div class="model-two" :class="{'border-model':isbordertwo}" @click="bordertwo">模版二</div>
+
+      <span @click="closeSelectModel" class="backIndex model-close">取消选择(默认)</span>
+      <!-- 需要点击模版再确认 -->
+      <span @click="showGrade" class="backIndex model-close">确定</span> 
+    </div>
+
+    <!-- 毕业故事制作页面1 -->
+    <div class="grade-story-diy" v-if="showGradeStoryone">
+      模版一
+      <span class="backIndex" v-if="showclose" @click="closeFinishedStory">close</span>
+
+      <span class="backIndex" @click="indexBack" v-if="showclose">上一页</span>
+      <span class="backIndex" @click="indexNext" v-if="showclose">下一页</span>
+
+      <audio src="http://www.170mv.com/kw/other.web.rd01.sycdn.kuwo.cn/resource/n2/10/49/1242274445.mp3" id="Audio"></audio>
+      <view>
+        <img :src="musicUrl" :class="{'rotateAn': isplay}" @click="controlMusic" id="musicstyle"/>
+      </view>
 
       <!-- 第一页 -->
       <div class="index-one" v-if="isIndex===1">
@@ -126,7 +137,7 @@
           <span class="backIndex" @click="closeGradeStory">取消制作</span>
           <span class="backIndex" @click="indexBack" v-if="isBack">上一页</span>
           <span class="backIndex" @click="indexNext" v-if="isNext">下一页</span>
-          <span class="backIndex">提交</span>
+          <span class="backIndex" @click="imgStorySubmit">提交</span>
         </div>
       </div>
       
@@ -161,7 +172,7 @@
           <span class="backIndex" @click="closeGradeStory">取消制作</span>
           <span class="backIndex" @click="indexBack" v-if="isBack">上一页</span>
           <span class="backIndex" @click="indexNext" v-if="isNext">下一页</span>
-          <span class="backIndex">提交</span>
+          <span class="backIndex" @click="imgStorySubmit">提交</span>
         </div>
       </div>
 
@@ -196,7 +207,7 @@
           <span class="backIndex" @click="closeGradeStory">取消制作</span>
           <span class="backIndex" @click="indexBack" v-if="isBack">上一页</span>
           <span class="backIndex" @click="indexNext" v-if="isNext">下一页</span>
-          <span class="backIndex">提交</span>
+          <span class="backIndex" @click="imgStorySubmit">提交</span>
         </div>
       </div>
 
@@ -232,7 +243,7 @@
           <span class="backIndex" @click="closeGradeStory">取消制作</span>
           <span class="backIndex" @click="indexBack" v-if="isBack">上一页</span>
           <span class="backIndex" @click="indexNext" v-if="isNext">下一页</span>
-          <span class="backIndex">提交</span>
+          <span class="backIndex" @click="imgStorySubmit">提交</span>
         </div>
       </div>
 
@@ -267,16 +278,208 @@
           <span class="backIndex" @click="closeGradeStory">取消制作</span>
           <span class="backIndex" @click="indexBack" v-if="isBack">上一页</span>
           <span class="backIndex" @click="indexNext" v-if="isNext">下一页</span>
-          <span class="backIndex">提交</span>
+          <span class="backIndex" @click="imgStorySubmit">提交</span>
         </div>
         
       </div>
     </div>
+      <!--毕业故事制作页面2 -->
+    <div class="grade-story-diy" v-if="showGradeStory">
+      模版二
+      <span class="backIndex" v-if="showclose" @click="closeFinishedStory">close</span>
+
+      <span class="backIndex" @click="indexBack" v-if="showclose">上一页</span>
+      <span class="backIndex" @click="indexNext" v-if="showclose">下一页</span>
+
+      <audio src="http://sc1.111ttt.cn/2015/1/05/16/98162231335.mp3" id="Audio"></audio>
+      <view>
+        <img :src="musicUrl" :class="{'rotateAn': isplay}" @click="controlMusic" id="musicstyle"/>
+      </view>
+
+      <!-- 第一页 -->
+      <div class="index-one" v-if="isIndex===1">
+        1
+        <view class="page-section">
+          <div class="page-section-text">
+            <p class="text-one">{{isTextOne}}</p>
+            <p class="text-one">{{isTextTwo}}</p>
+            <div class="page-section-text-two">
+              <p class="text-two">{{isTextThree}}</p>
+            </div>
+          </div>
+
+          <movable-area scale-area>
+            <!-- <div class="testOne"></div> -->
+            <movable-view direction="all" bindchange="onChange" bindscale="onScale" scale scale-min="0.5" scale-max="4" :scale-value="scale">
+              <img :src="urls[isIndex-1].src" class="diyimg">
+            </movable-view>
+          </movable-area>
+        </view>
+        <div class="changeText" v-if="isShowText">
+          <input type="text" v-model="isTextOne">
+          <input type="text" v-model="isTextTwo">
+          <input type="text" v-model="isTextThree">
+          <span @click="closeChangeText">提交</span>
+        </div>
+        <div class="dom-text" v-if="isDom">
+          <span class="backIndex" @click="showChangeText">修改文字</span>
+          <span class="backIndex" @click="resetGradeStory">重新制作</span>
+          <span class="backIndex" @click="closeGradeStory">取消制作</span>
+          <span class="backIndex" @click="indexBack" v-if="isBack">上一页</span>
+          <span class="backIndex" @click="indexNext" v-if="isNext">下一页</span>
+          <span class="backIndex" @click="imgStorySubmit">提交</span>
+        </div>
+      </div>
+      
+      <!-- 第二页 -->
+      <div class="index-two" v-if="isIndex===2">
+        2
+        <view class="page-section">
+          <div class="page-section-texttwo">
+            <p>{{twoisTextOne}}</p>
+            <p>{{twoisTextTwo}}</p>
+            <p>{{twoisTextThree}}</p>
+            <p>{{twoisTextFour}}</p>
+          </div>
+
+          <movable-area scale-area class="area-two">
+            <!-- <div class="testOne"></div> -->
+            <movable-view class="view-two" direction="all" bindchange="onChange" bindscale="onScale" scale scale-min="0.5" scale-max="4" :scale-value="scale">
+              <img :src="urls[isIndex-1].src" class="diyimg diyimg-two">
+            </movable-view>
+          </movable-area>
+        </view>
+        <div class="changeText" v-if="isShowText">
+          <input type="text" v-model="twoisTextOne">
+          <input type="text" v-model="twoisTextTwo">
+          <input type="text" v-model="twoisTextThree">
+          <input type="text" v-model="twoisTextFour">
+          <span @click="closeChangeText">提交</span>
+        </div>
+        <div class="dom-text" v-if="isDom">
+          <span class="backIndex" @click="showChangeText">修改文字</span>
+          <span class="backIndex" @click="resetGradeStory">重新制作</span>
+          <span class="backIndex" @click="closeGradeStory">取消制作</span>
+          <span class="backIndex" @click="indexBack" v-if="isBack">上一页</span>
+          <span class="backIndex" @click="indexNext" v-if="isNext">下一页</span>
+          <span class="backIndex" @click="imgStorySubmit">提交</span>
+        </div>
+      </div>
+
+      <!-- 第三页 -->
+      <div class="index-three" v-if="isIndex===3">
+        3
+        <view class="page-section">
+
+          <movable-area scale-area class="area-three">
+            <!-- <div class="testOne"></div> -->
+            <movable-view class="view-three" direction="all" bindchange="onChange" bindscale="onScale" scale scale-min="0.5" scale-max="4" :scale-value="scale">
+              <img :src="urls[isIndex-1].src" class="diyimg diyimg-three">
+            </movable-view>
+          </movable-area>
+
+          <div class="page-section-textthree">
+            <p>{{threeisTextOne}}</p>
+            <p>{{threeisTextTwo}}</p>
+            <p>{{threeisTextThree}}</p>
+            <span class="love"></span>
+          </div>
+        </view>
+        <div class="changeText" v-if="isShowText">
+          <input type="text" v-model="threeisTextOne">
+          <input type="text" v-model="threeisTextTwo">
+          <input type="text" v-model="threeisTextThree">
+          <span @click="closeChangeText">提交</span>
+        </div>
+        <div class="dom-text" v-if="isDom">
+          <span class="backIndex" @click="showChangeText">修改文字</span>
+          <span class="backIndex" @click="resetGradeStory">重新制作</span>
+          <span class="backIndex" @click="closeGradeStory">取消制作</span>
+          <span class="backIndex" @click="indexBack" v-if="isBack">上一页</span>
+          <span class="backIndex" @click="indexNext" v-if="isNext">下一页</span>
+          <span class="backIndex" @click="imgStorySubmit">提交</span>
+        </div>
+      </div>
+
+      <!-- 第四页 -->
+      <div class="index-four" v-if="isIndex===4">
+        4
+        <view class="page-section">
+          
+          <movable-area scale-area class="area-four">
+            <!-- <div class="testOne"></div> -->
+            <movable-view class="view-four" direction="all" bindchange="onChange" bindscale="onScale" scale scale-min="0.5" scale-max="4" :scale-value="scale">
+              <img :src="urls[isIndex-1].src" class="diyimg diyimg-four">
+            </movable-view>
+          </movable-area>
+          <div class="page-section-textfour">
+            <h1>HAPPY</h1>
+            <p>{{fourisTextOne}}</p>
+            <p>{{fourisTextTwo}}</p>
+            <p>{{fourisTextThree}}</p>
+            <p>{{fourisTextFour}}</p>
+          </div>
+        </view>
+        <div class="changeText" v-if="isShowText">
+          <input type="text" v-model="fourisTextOne">
+          <input type="text" v-model="fourisTextTwo">
+          <input type="text" v-model="fourisTextThree">
+          <input type="text" v-model="fourisTextFour">
+          <span @click="closeChangeText">提交</span>
+        </div>
+        <div class="dom-text" v-if="isDom">
+          <span class="backIndex" @click="showChangeText">修改文字</span>
+          <span class="backIndex" @click="resetGradeStory">重新制作</span>
+          <span class="backIndex" @click="closeGradeStory">取消制作</span>
+          <span class="backIndex" @click="indexBack" v-if="isBack">上一页</span>
+          <span class="backIndex" @click="indexNext" v-if="isNext">下一页</span>
+          <span class="backIndex" @click="imgStorySubmit">提交</span>
+        </div>
+      </div>
+
+      <!-- 第五页 -->
+      <div class="index-five" v-if="isIndex===5">
+        5
+        <view class="page-section">
+          
+          <movable-area scale-area class="area-five">
+            <movable-view class="view-five" direction="all" scale scale-min="0.5" scale-max="4" :scale-value="scale">
+              <img :src="urls[isIndex-1].src" class="diyimg diyimg-five">
+            </movable-view>
+          </movable-area>
+          <div class="page-section-textfive">
+            <h1>Memory</h1>
+            <p>{{fiveisTextOne}}</p>
+            <p>{{fiveisTextTwo}}</p>
+            <p>{{fiveisTextThree}}</p>
+            <p>{{fiveisTextFour}}</p>
+          </div>
+        </view>
+        <div class="changeText" v-if="isShowText">
+          <input type="text" v-model="fiveisTextOne">
+          <input type="text" v-model="fiveisTextTwo">
+          <input type="text" v-model="fiveisTextThree">
+          <input type="text" v-model="fiveisTextFour">
+          <span @click="closeChangeText">提交</span>
+        </div>
+        <div class="dom-text" v-if="isDom">
+          <span class="backIndex" @click="showChangeText">修改文字</span>
+          <span class="backIndex" @click="resetGradeStory">重新制作</span>
+          <span class="backIndex" @click="closeGradeStory">取消制作</span>
+          <span class="backIndex" @click="indexBack" v-if="isBack">上一页</span>
+          <span class="backIndex" @click="indexNext" v-if="isNext">下一页</span>
+          <span class="backIndex" @click="imgStorySubmit">提交</span>
+        </div>
+        
+      </div>
+    </div>
+
   </div>
 </template>
  
 <script>
 // import { constants } from 'fs';
+import musicImg from '../../../static/images/music.png'
     export default {
       props:["width","height","max","srcs"],
       data(){
@@ -313,19 +516,29 @@
           showImgStore: false,
           showStory: false,
           showImgSelect: false,
-          showGradeStory: false,
+          showGradeStory: false, //here
+          showGradeStoryone: false, //here
+          showclose: false,
           isShowText: false,
           isDom: true,
           isBack: true,
           isNext: true,
+          ismodel: false,
           x: 0,
           y: 0,
-          scale: 2
+          scale: 2,
+          isplay: false,
+          musicUrl: musicImg,
+          isborderone: false,
+          isbordertwo: false
+          
         }
       },
       mounted(){
         // this.urls = this.\|| [];
         this.onLoad()
+        this.audioCtx = wx.createAudioContext('Audio')
+        
       },
       methods:{
     updatedPPt(id){
@@ -389,20 +602,32 @@
          */
         uploadImg(target){
           let that = this;
+        
           wx.chooseImage({
-            count: that.max || 3,
+            count: that.max || 9,
             sizeType: ['original', 'compressed'],
             sourceType: ['album', 'camera'],
-            success: function (res) {
+            fail:(res)=>{
+                 console.log(res,'错误')
+            },
+            success: async function (res) {
+              console.log(res.tempFilePaths)
               res.tempFilePaths.forEach(v=>{
                 that.urls.push({src:v});
+               
               });
-             that.num+= res.tempFilePaths.length
-              that.uploadFile(res.tempFilePaths[0],{
+             that.num+= that.urls.length
+             let imgArr=[]
+             for(let i=0,j=res.tempFilePaths.length;i<=j;i++  ){
+               
+                   that.uploadFile(res.tempFilePaths[i],{
                  avatarUrl:that.userInfo.avatarUrl
 
               },target)
-             
+
+             }
+              
+         console.log(imgArr,'sdasd')
               that.$emit("choosed",{all:that.urls,currentUpload:res.tempFilePaths});
             }
           })
@@ -419,7 +644,8 @@
                     //  }, // HTTP 请求中其他额外的 form data
                     success: function(res){
                         var resData = res.data;
-                        console.log('上传成功')
+                        console.log('上传成功',res.data.imgUrl)
+                           
                         // success
                     },
                     fail: function(res) {
@@ -442,14 +668,14 @@
               if(res.tapIndex === 0){
                 wx.previewImage({
                   current:that.urls[index],
-                  urls:that.urls
+                  urls:that.urls.map(itme=>item.src)
                 });
               } else {
                 wx.request({
                   method:'delete',
                   url:this.$url+`/api/album/${item._id}`,
                   success:(res)=>{
-                    console.log(`删除照片成功`)
+                    console.log(`照片删除成功`)
                   }
                 })
                 that.urls.splice(index,1);
@@ -479,19 +705,26 @@
           this.isIndex = this.isIndex - 1
           
           if(this.isIndex===0) {
-            this.isBack = false
-          } else {
-            this.isBack = true
+            this.isIndex = this.isIndex + 1
           }
+          // if(this.isIndex===0) {
+          //   this.isBack = false
+          // } else {
+          //   this.isBack = true
+          // }
         },
 
         indexNext() {
           this.isIndex = this.isIndex + 1
+          
           if(this.isIndex===6) {
-            this.isNext = false
-          } else {
-            this.isNext = true
+            this.isIndex = this.isIndex - 1
           }
+          // if(this.isIndex===6) {
+          //   this.isNext = false
+          // } else {
+          //   this.isNext = true
+          // }
         },
 
         hideEleImgStore() {
@@ -522,20 +755,34 @@
                  res.data.forEach(item=>{
                    this.urls.unshift({...item,src:this.$url+`/image/${item.imgUrl}`})
                  })
-                 
-                 this.showGradeStory = true
+                
+                if(this.isborderone==true&&this.isbordertwo==false) {
+                  //原先的
+                  this.showGradeStoryone = true
+                  this.showGradeStory = false
+                  this.isDom = true
+                }
+                if(this.isborderone==false&&this.isbordertwo==true) {
+                  this.showGradeStory = true
+                  this.showGradeStoryone = false
+                  this.isDom = true
+                }
             }
           })
         },
 
         resetGradeStory() {
           this.showGradeStory = false
+          this.showGradeStoryone = false //xinjia
+          this.ismodel = false
         },
 
         closeGradeStory() {
           this.showGradeStory = false
+          this.showGradeStoryone = false //xinjia
           this.showImgSelect = false
           this.showStory = false
+          this.ismodel = false
         },
 
         showChangeText() {
@@ -548,27 +795,59 @@
           this.isDom = true
         },
 
-        // test
-        // init(){
-        //   this.totalPage = Math.ceil(this.numberArr.length / this.itemNumPerPage)
-        //   this.totalPage = this.totalPage < 1 ? 1 : this.totalPage
-        // },
-        // getCurPageContent: function(numberArr, curPage, itemNumPerPage){
-        //   return numberArr.filter(function(element, index){
-        //     if(index >= (curPage -1)* itemNumPerPage && index < curPage *itemNumPerPage){
-        //       return true
-        //     }else{
-        //       return false
-        //     }
-        //   })
-        // },
-        // handleClick: function(arg){
-        //   if(arg == 'leftBtn'){
-        //     this.curPage = this.curPage > 1 ? --this.curPage : this.totalPage
-        //   }else if (arg == 'rightBtn'){
-        //     this.curPage = this.curPage < this.totalPage ? ++this.curPage: 1
-        //   }
-        // }
+        closeFinishedStory() {
+          this.showGradeStory = false
+          this.showGradeStoryone = false //xinjia
+          this.showImgSelect = false
+          this.showStory = false
+          this.showclose = false
+        },
+
+        imgStorySubmit() {
+          if(this.isborderone==true&&this.isbordertwo==false) {
+            //原先的
+            this.showGradeStoryone = true
+            this.showGradeStory = false
+            this.isDom = true
+          }
+          if(this.isborderone==false&&this.isbordertwo==true) {
+            this.showGradeStory = true
+            this.showGradeStoryone = false
+            this.isDom = true
+          }
+          // this.showGradeStory = true
+          this.showclose = true
+          this.isDom = false
+          this.isIndex = 1
+        },
+
+        // music
+        controlMusic: function() {
+
+          if(this.isplay) {
+            this.isplay = false
+            this.audioCtx.pause()
+          }else {
+            this.isplay = true
+            this.audioCtx.play()
+          }
+        },
+        
+        // 模版选择
+        showSelectModel() {
+          this.ismodel = true
+        },
+        closeSelectModel() {
+          this.ismodel = false
+        },
+        borderone() {
+          this.isborderone= true
+          this.isbordertwo = false
+        },
+        bordertwo() {
+          this.isborderone = false
+          this.isbordertwo = true
+        }
       }
     }
 </script>
@@ -809,6 +1088,10 @@
       margin-right: 5px;
       font-size: 12px;
     }
+    .backIndex:hover {
+     background-color: #1296db;
+     color: black;
+    }
     .attention-one {
       border: 1px solid #888888;
       border-radius: 10px;
@@ -831,6 +1114,11 @@
       background: #ffffff;
       border-radius: 10px;
       font-weight: blod;
+      font-size: 12px;
+    }
+    .submit-btn:hover {
+      background-color: #1296db;
+      color: black;
     }
 
     /* 毕业故事制作css */
@@ -1053,4 +1341,63 @@
     .page-section-textfive p{
       padding: 3px;
     }
+
+    /* music */
+    #musicstyle {
+      width: 30px;
+      height: 30px;
+      float: right;
+      margin-right: 30px;
+    }
+    .rotateAn {
+      animation: rotate 3s linear infinite;
+      width: 30px;
+      height: 30px;
+    }
+    @keyframes rotate {
+      from {transform: rotate(0deg)}
+      to {transform: rotate(360deg)}
+    }
+
+    /* 模版选择 */
+    .select-model {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: gray;
+    }
+    .model-one {
+      position: relative;
+      top: 120px;
+      display: inline-block;
+      margin: 10px;
+      margin-left: 30px;
+      width: 120px;
+      height: 120px;
+      background-color: #fff;
+    }
+    .model-two {
+      position: relative;
+      top: 120px;
+      display: inline-block;
+      width: 120px;
+      height: 120px;
+      margin: 10px;
+      margin-left: 50px;
+      background-color: #fff;
+    }
+    .model-close {
+      position: relative;
+      top: 150px;
+      margin: 10px 50px 0 50px;
+      margin-left: 80px;
+    }
+    .border-model {
+      width: 150px;
+      height: 150px;
+      border: 2px solid green;
+    }
+    
 </style>
