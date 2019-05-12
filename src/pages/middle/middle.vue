@@ -47,7 +47,7 @@
         <div class="title">电子相册</div>
       </div>
       <div class="j-pic-upload">
-        <div class="j-upload-btn" @click="uploadImg('/api/album')" :style="{'width':width || '120rpx','height':height || '120rpx'}">
+        <div class="j-upload-btn" @click="uploadImg('/api/albums')" :style="{'width':width || '120rpx','height':height || '120rpx'}">
             <span class="j-upload-add">+</span>
         </div>
         <img @click="previewImg(index,item)" v-for="(item,index) in urls" :key="item.src" :src="item.src" :style="{'width':width || '120rpx','height':height || '120rpx'}" class="img" >
@@ -74,10 +74,10 @@
 
       <div class="img-submit">
         <span @click="hideEleImgStore" class="backIndex">取消上传</span>
-        <span class="backIndex" @click="showSelectModel">选择制作模版</span>
-        <span class="submit-btn" @click="showGrade('/api/graduationAlbum')">
+        <span class="backIndex submit-btn" @click="showSelectModel">下一步(选择模版)</span>
+        <!-- <span class="submit-btn" @click="showGrade('/api/graduationAlbum')">
           提交
-        </span>
+        </span> -->
       </div>
     </div>
 
@@ -96,20 +96,23 @@
     <!-- 毕业故事制作页面1 -->
     <div class="grade-story-diy" v-if="showGradeStoryone">
       模版一
-      <span class="backIndex" v-if="showclose" @click="closeFinishedStory">close</span>
-
-      <span class="backIndex" @click="indexBack" v-if="showclose">上一页</span>
-      <span class="backIndex" @click="indexNext" v-if="showclose">下一页</span>
 
       <audio src="http://www.170mv.com/kw/other.web.rd01.sycdn.kuwo.cn/resource/n2/10/49/1242274445.mp3" id="Audio"></audio>
       <view>
         <img :src="musicUrl" :class="{'rotateAn': isplay}" @click="controlMusic" id="musicstyle"/>
       </view>
 
+      <div class="model-info">
+        <span class="backIndex zhujiemian" v-if="showclose" @click="closeFinishedStory">返回主界面</span>
+        <span class="backIndex" @click="indexBack" v-if="showclose">上一页</span>
+        <span class="backIndex" @click="indexNext" v-if="showclose">下一页</span>
+        
+      </div>
+    
       <!-- 第一页 -->
       <div class="index-one" v-if="isIndex===1">
         1
-        <view class="page-section">
+        <view class="page-section" :class="{'boxShadow': isShadow}">
           <div class="page-section-text">
             <p class="text-one">{{isTextOne}}</p>
             <p class="text-one">{{isTextTwo}}</p>
@@ -144,7 +147,7 @@
       <!-- 第二页 -->
       <div class="index-two" v-if="isIndex===2">
         2
-        <view class="page-section">
+        <view class="page-section" :class="{'boxShadow': isShadow}">
           <div class="page-section-texttwo">
             <p>{{twoisTextOne}}</p>
             <p>{{twoisTextTwo}}</p>
@@ -179,7 +182,7 @@
       <!-- 第三页 -->
       <div class="index-three" v-if="isIndex===3">
         3
-        <view class="page-section">
+        <view class="page-section" :class="{'boxShadow': isShadow}">
 
           <movable-area scale-area class="area-three">
             <!-- <div class="testOne"></div> -->
@@ -214,7 +217,7 @@
       <!-- 第四页 -->
       <div class="index-four" v-if="isIndex===4">
         4
-        <view class="page-section">
+        <view class="page-section" :class="{'boxShadow': isShadow}">
           
           <movable-area scale-area class="area-four">
             <!-- <div class="testOne"></div> -->
@@ -250,7 +253,7 @@
       <!-- 第五页 -->
       <div class="index-five" v-if="isIndex===5">
         5
-        <view class="page-section">
+        <view class="page-section" :class="{'boxShadow': isShadow}">
           
           <movable-area scale-area class="area-five">
             <movable-view class="view-five" direction="all" scale scale-min="0.5" scale-max="4" :scale-value="scale">
@@ -286,20 +289,22 @@
       <!--毕业故事制作页面2 -->
     <div class="grade-story-diy" v-if="showGradeStory">
       模版二
-      <span class="backIndex" v-if="showclose" @click="closeFinishedStory">close</span>
-
-      <span class="backIndex" @click="indexBack" v-if="showclose">上一页</span>
-      <span class="backIndex" @click="indexNext" v-if="showclose">下一页</span>
-
       <audio src="http://sc1.111ttt.cn/2015/1/05/16/98162231335.mp3" id="Audio"></audio>
       <view>
         <img :src="musicUrl" :class="{'rotateAn': isplay}" @click="controlMusic" id="musicstyle"/>
       </view>
 
+      <div class="model-info">
+        <span class="backIndex zhujiemian" v-if="showclose" @click="closeFinishedStory">返回主界面</span>
+        <span class="backIndex" @click="indexBack" v-if="showclose">上一页</span>
+        <span class="backIndex" @click="indexNext" v-if="showclose">下一页</span>
+        
+      </div>
+
       <!-- 第一页 -->
       <div class="index-one" v-if="isIndex===1">
         1
-        <view class="page-section">
+        <view class="page-section page-two" :class="{'boxShadow': isShadow}">
           <div class="page-section-text">
             <p class="text-one">{{isTextOne}}</p>
             <p class="text-one">{{isTextTwo}}</p>
@@ -334,7 +339,7 @@
       <!-- 第二页 -->
       <div class="index-two" v-if="isIndex===2">
         2
-        <view class="page-section">
+        <view class="page-section page-two" :class="{'boxShadow': isShadow}">
           <div class="page-section-texttwo">
             <p>{{twoisTextOne}}</p>
             <p>{{twoisTextTwo}}</p>
@@ -369,7 +374,7 @@
       <!-- 第三页 -->
       <div class="index-three" v-if="isIndex===3">
         3
-        <view class="page-section">
+        <view class="page-section page-two" :class="{'boxShadow': isShadow}">
 
           <movable-area scale-area class="area-three">
             <!-- <div class="testOne"></div> -->
@@ -404,7 +409,7 @@
       <!-- 第四页 -->
       <div class="index-four" v-if="isIndex===4">
         4
-        <view class="page-section">
+        <view class="page-section page-two" :class="{'boxShadow': isShadow}">
           
           <movable-area scale-area class="area-four">
             <!-- <div class="testOne"></div> -->
@@ -440,7 +445,7 @@
       <!-- 第五页 -->
       <div class="index-five" v-if="isIndex===5">
         5
-        <view class="page-section">
+        <view class="page-section page-two" :class="{'boxShadow': isShadow}">
           
           <movable-area scale-area class="area-five">
             <movable-view class="view-five" direction="all" scale scale-min="0.5" scale-max="4" :scale-value="scale">
@@ -531,7 +536,8 @@ import { resolve } from 'url';
           isplay: false,
           musicUrl: musicImg,
           isborderone: false,
-          isbordertwo: false
+          isbordertwo: false,
+          isShadow: false
           
         }
       },
@@ -679,13 +685,13 @@ import { resolve } from 'url';
                   urls:that.urls.map(itme=>item.src)
                 });
               } else {
-                // wx.request({
-                //   method:'delete',
-                //   url:this.$url+`/api/album/${item._id}`,
-                //   success:(res)=>{
-                //     console.log(`照片删除成功`)
-                //   }
-                // })
+                wx.request({
+                  method:'delete',
+                  url:this.$url+`/api/album/${item._id}`,
+                  success:(res)=>{
+                    console.log(`照片删除成功`)
+                  }
+                })
                 that.urls.splice(index,1);
                 that.$emit("delete",that.urls);
               }
@@ -789,11 +795,13 @@ import { resolve } from 'url';
                   this.showGradeStoryone = true
                   this.showGradeStory = false
                   this.isDom = true
+                  this.isIndex = 1
                 }
                 if(this.isborderone==false&&this.isbordertwo==true) {
                   this.showGradeStory = true
                   this.showGradeStoryone = false
                   this.isDom = true
+                  this.isIndex = 1
                 }
             }
           })
@@ -834,6 +842,8 @@ import { resolve } from 'url';
           this.showImgSelect = false
           this.showStory = false
           this.showclose = false
+          this.ismodel = false
+          this.isShadow = false
         },
 
         imgStorySubmit() {
@@ -852,6 +862,8 @@ import { resolve } from 'url';
           this.showclose = true
           this.isDom = false
           this.isIndex = 1
+          this.isShadow = true
+
         },
 
         // music
@@ -980,6 +992,9 @@ import { resolve } from 'url';
       font-weight: bold;
       font-size: 15px;
       line-height: 15px;
+    }
+    .middle-create-enter:hover {
+      background-color: #1296db;
     }
 
     /* info */
@@ -1198,6 +1213,10 @@ import { resolve } from 'url';
       margin-bottom: 60rpx;
     }
 
+    .page-two {
+      background-color: rgb(176,224,205);
+    }
+
     .diyimg {
       width: 200rpx;
       height: 200rpx;
@@ -1399,7 +1418,8 @@ import { resolve } from 'url';
       left: 0;
       right: 0;
       bottom: 0;
-      background-color: gray;
+      background-color: #c0c0c0;
+      
     }
     .model-one {
       position: relative;
@@ -1409,7 +1429,11 @@ import { resolve } from 'url';
       margin-left: 30px;
       width: 120px;
       height: 120px;
-      background-color: #fff;
+      background-color: burlywood;
+      font-size: 15px;
+      line-height: 15px;
+      color: #fff;
+      text-align: center;
     }
     .model-two {
       position: relative;
@@ -1419,7 +1443,11 @@ import { resolve } from 'url';
       height: 120px;
       margin: 10px;
       margin-left: 50px;
-      background-color: #fff;
+      background-color: rgb(176,224,205);
+      font-size: 15px;
+      line-height: 15px;
+      color: #fff;
+      text-align: center;
     }
     .model-close {
       position: relative;
@@ -1431,6 +1459,20 @@ import { resolve } from 'url';
       width: 150px;
       height: 150px;
       border: 2px solid green;
+    }
+    .model-info {
+      position: fixed;
+      bottom: 40px;
+      left: 42px;
+    }
+    .zhujiemian {
+      margin-right: 15px;
+      padding: 8px;
+    }
+
+    /* 提交后阴影 */
+    .boxShadow {
+      box-shadow: 10px 10px 5px #B4CDCD;
     }
     
 </style>
