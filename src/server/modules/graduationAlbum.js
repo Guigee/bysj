@@ -6,6 +6,7 @@ const GraduationAlbum = mongoose.model('GraduationAlbum',new mongoose.Schema({
     imgUrl:  String ,
     position: Array ,
     describle: String ,
+    index : Number,
     date: {
         type:Date,
         default:Date.now()

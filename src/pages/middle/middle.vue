@@ -59,7 +59,7 @@
     <div class="img-select-index" v-if="showImgSelect">
       <div class="img-select-box">
         <div class="j-pic-upload">
-          <div class="j-upload-btn" @click="uploadImg('/api/graduationAlbum')" :style="{'width':width || '120rpx','height':height || '120rpx'}">
+          <div class="j-upload-btn" @click="uploadImg()" :style="{'width':width || '120rpx','height':height || '120rpx'}">
               <span class="j-upload-add">+</span>
           </div>
           <img @click="previewImg(index,item)" v-for="(item,index) in urls" :key="item.src" :src="item.src" :style="{'width':width || '120rpx','height':height || '120rpx'}" class="img" >
@@ -75,7 +75,7 @@
       <div class="img-submit">
         <span @click="hideEleImgStore" class="backIndex">取消上传</span>
         <span class="backIndex" @click="showSelectModel">选择制作模版</span>
-        <span class="submit-btn" @click="showGrade">
+        <span class="submit-btn" @click="showGrade('/api/graduationAlbum')">
           提交
         </span>
       </div>
@@ -90,7 +90,7 @@
 
       <span @click="closeSelectModel" class="backIndex model-close">取消选择(默认)</span>
       <!-- 需要点击模版再确认 -->
-      <span @click="showGrade" class="backIndex model-close">确定</span> 
+      <span @click="showGrade('/api/graduationAlbum')" class="backIndex model-close">确定</span> 
     </div>
 
     <!-- 毕业故事制作页面1 -->
@@ -479,7 +479,8 @@
  
 <script>
 // import { constants } from 'fs';
-import musicImg from '../../../static/images/music.png'
+import musicImg from '../../../static/images/music.png';
+import { resolve } from 'url';
     export default {
       props:["width","height","max","srcs"],
       data(){
@@ -617,15 +618,20 @@ import musicImg from '../../../static/images/music.png'
                
               });
              that.num+= that.urls.length
-             let imgArr=[]
+             if(target){
+                let imgArr=[]
              for(let i=0,j=res.tempFilePaths.length;i<=j;i++  ){
-               
-                   that.uploadFile(res.tempFilePaths[i],{
-                 avatarUrl:that.userInfo.avatarUrl
-
+               if(res.tempFilePaths[i]){
+                       that.uploadFile(res.tempFilePaths[i],{
+                 avatarUrl:that.userInfo.avatarUrl,
+                 index:i
               },target)
+               }
+                   
 
              }
+             }
+            
               
          console.log(imgArr,'sdasd')
               that.$emit("choosed",{all:that.urls,currentUpload:res.tempFilePaths});
@@ -633,7 +639,8 @@ import musicImg from '../../../static/images/music.png'
           })
         },
         uploadFile(filePath,option,target){
-               wx.uploadFile({
+            return new Promise((resolve,reject)=>{
+                     wx.uploadFile({
                     url:this.$url+target,
                     filePath:filePath, 
                     formData:option,
@@ -645,7 +652,7 @@ import musicImg from '../../../static/images/music.png'
                     success: function(res){
                         var resData = res.data;
                         console.log('上传成功',res.data.imgUrl)
-                           
+                           resolve('上传成功')
                         // success
                     },
                     fail: function(res) {
@@ -659,6 +666,7 @@ import musicImg from '../../../static/images/music.png'
                         
                       }
                     }) 
+            })  
         },
         previewImg(index,item){
           let that = this;
@@ -671,13 +679,13 @@ import musicImg from '../../../static/images/music.png'
                   urls:that.urls.map(itme=>item.src)
                 });
               } else {
-                wx.request({
-                  method:'delete',
-                  url:this.$url+`/api/album/${item._id}`,
-                  success:(res)=>{
-                    console.log(`照片删除成功`)
-                  }
-                })
+                // wx.request({
+                //   method:'delete',
+                //   url:this.$url+`/api/album/${item._id}`,
+                //   success:(res)=>{
+                //     console.log(`照片删除成功`)
+                //   }
+                // })
                 that.urls.splice(index,1);
                 that.$emit("delete",that.urls);
               }
@@ -746,16 +754,36 @@ import musicImg from '../../../static/images/music.png'
           this.showImgSelect = true
         },
 
-        showGrade() {
-          this.urls=[]
-          wx.request({
+  showGrade(target) {
+          // this.urls=[]
+          let that=this
+   
+ new Promise (async (resolve,reject)=>{
+            for(let i=0,j=this.urls.length;i<=j;i++  ){
+               if(this.urls[i]){
+                     await this.uploadFile(this.urls[i].src,{
+                 avatarUrl:this.userInfo.avatarUrl,
+                 index:i
+                  },target)
+                   }
+                }
+                resolve('上传完毕')
+ }).then(res=>{
+              wx.request({
             method:'get',
             url:this.$url+`/api/graduationAlbum/${this.userInfo.avatarUrl}/${this.num}`,
             success:(res)=>{
-                 res.data.forEach(item=>{
-                   this.urls.unshift({...item,src:this.$url+`/image/${item.imgUrl}`})
+
+                 res.data.sort((a,b)=>{
+            
+                    return a.index > b.index
                  })
-                
+                 console.log(res.data,'数据')
+               this.urls = res.data.map(item=>{
+                   item.src=this.$url+`/image/${item.imgUrl}`
+                   return item
+                 })
+                console.log(this.urls)
                 if(this.isborderone==true&&this.isbordertwo==false) {
                   //原先的
                   this.showGradeStoryone = true
@@ -769,6 +797,11 @@ import musicImg from '../../../static/images/music.png'
                 }
             }
           })
+      
+ })
+
+         
+            
         },
 
         resetGradeStory() {
