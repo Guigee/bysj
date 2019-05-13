@@ -145,6 +145,7 @@ export default {
     },
     methods: {
          onLoad() {
+    wx.login()
     // 查看是否授权
      let _this=this
      wx.getSetting({

@@ -123,7 +123,7 @@
 
           <movable-area scale-area>
             <!-- <div class="testOne"></div> -->
-            <movable-view direction="all" bindchange="onChange" bindscale="onScale" scale scale-min="0.5" scale-max="4" :scale-value="scale">
+            <movable-view direction="all" @change="onChange" @scale="onScale" scale scale-min="0.5" scale-max="4" :scale-value="scale">
               <img :src="urls[isIndex-1].src" class="diyimg">
             </movable-view>
           </movable-area>
@@ -157,7 +157,7 @@
 
           <movable-area scale-area class="area-two">
             <!-- <div class="testOne"></div> -->
-            <movable-view class="view-two" direction="all" bindchange="onChange" bindscale="onScale" scale scale-min="0.5" scale-max="4" :scale-value="scale">
+            <movable-view class="view-two" direction="all" @change="onChange" @scale="onScale" scale scale-min="0.5" scale-max="4" :scale-value="scale">
               <img :src="urls[isIndex-1].src" class="diyimg diyimg-two">
             </movable-view>
           </movable-area>
@@ -186,7 +186,7 @@
 
           <movable-area scale-area class="area-three">
             <!-- <div class="testOne"></div> -->
-            <movable-view class="view-three" direction="all" bindchange="onChange" bindscale="onScale" scale scale-min="0.5" scale-max="4" :scale-value="scale">
+            <movable-view class="view-three" direction="all" @change="onChange" @scale="onScale" scale scale-min="0.5" scale-max="4" :scale-value="scale">
               <img :src="urls[isIndex-1].src" class="diyimg diyimg-three">
             </movable-view>
           </movable-area>
@@ -221,7 +221,7 @@
           
           <movable-area scale-area class="area-four">
             <!-- <div class="testOne"></div> -->
-            <movable-view class="view-four" direction="all" bindchange="onChange" bindscale="onScale" scale scale-min="0.5" scale-max="4" :scale-value="scale">
+            <movable-view class="view-four" direction="all" @change="onChange" @scale="onScale" scale scale-min="0.5" scale-max="4" :scale-value="scale">
               <img :src="urls[isIndex-1].src" class="diyimg diyimg-four">
             </movable-view>
           </movable-area>
@@ -315,7 +315,8 @@
 
           <movable-area scale-area>
             <!-- <div class="testOne"></div> -->
-            <movable-view direction="all" bindchange="onChange" bindscale="onScale" scale scale-min="0.5" scale-max="4" :scale-value="scale">
+            <movable-view direction="all"  @change="onChange($event,isIndex-1)" @scale="onScale($event,isIndex-1)"  :x="urls[isIndex-1].position.x"
+      :y="urls[isIndex-1].position.y"  scale  scale-min="0.5" scale-max="4" :scale-value="scale">
               <img :src="urls[isIndex-1].src" class="diyimg">
             </movable-view>
           </movable-area>
@@ -349,7 +350,7 @@
 
           <movable-area scale-area class="area-two">
             <!-- <div class="testOne"></div> -->
-            <movable-view class="view-two" direction="all" bindchange="onChange" bindscale="onScale" scale scale-min="0.5" scale-max="4" :scale-value="scale">
+            <movable-view class="view-two" direction="all" @change="onChange" @scale="onScale" scale scale-min="0.5" scale-max="4" :scale-value="scale">
               <img :src="urls[isIndex-1].src" class="diyimg diyimg-two">
             </movable-view>
           </movable-area>
@@ -378,7 +379,7 @@
 
           <movable-area scale-area class="area-three">
             <!-- <div class="testOne"></div> -->
-            <movable-view class="view-three" direction="all" bindchange="onChange" bindscale="onScale" scale scale-min="0.5" scale-max="4" :scale-value="scale">
+            <movable-view class="view-three" direction="all" @change="onChange" @scale="onScale" scale scale-min="0.5" scale-max="4" :scale-value="scale">
               <img :src="urls[isIndex-1].src" class="diyimg diyimg-three">
             </movable-view>
           </movable-area>
@@ -413,7 +414,7 @@
           
           <movable-area scale-area class="area-four">
             <!-- <div class="testOne"></div> -->
-            <movable-view class="view-four" direction="all" bindchange="onChange" bindscale="onScale" scale scale-min="0.5" scale-max="4" :scale-value="scale">
+            <movable-view class="view-four" direction="all" @change="onChange" @scale="onScale" scale scale-min="0.5" scale-max="4" :scale-value="scale">
               <img :src="urls[isIndex-1].src" class="diyimg diyimg-four">
             </movable-view>
           </movable-area>
@@ -492,7 +493,6 @@ import { resolve } from 'url';
         return {
           urls: [],
           userInfo:{
-
           },
           msg: '留影纪念',
           isTextOne: "我的",
@@ -597,11 +597,15 @@ import { resolve } from 'url';
             scale: 3
           })
         },
-        onChange(e) {
-          console.log(e.detail)
+        onChange(e,index) {
+          // console.log(this.urls)
+          this.urls[index].position.x = e.x ;
+          this.urls[index].position.y = e.y ;
+          // console.log(e,'asdasd',index)
         },
-        onScale(e) {
-          console.log(e.detail)
+        onScale(e,index) {
+          // console.log(e.target.scale,index)
+          this.urls[index].position.scale=e.target.scale;
         },
 
         /**
@@ -787,6 +791,11 @@ import { resolve } from 'url';
                  console.log(res.data,'数据')
                this.urls = res.data.map(item=>{
                    item.src=this.$url+`/image/${item.imgUrl}`
+                   item.position={
+                     x:0,
+                     y:0,
+                     scale:0
+                   }
                    return item
                  })
                 console.log(this.urls)
@@ -847,6 +856,7 @@ import { resolve } from 'url';
         },
 
         imgStorySubmit() {
+          console.log(this.urls)
           if(this.isborderone==true&&this.isbordertwo==false) {
             //原先的
             this.showGradeStoryone = true
