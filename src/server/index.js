@@ -4,6 +4,7 @@ const mongoose = require('mongoose')
 const album = require('./routes/Album')
 const connecters = require('./routes/connecters')
 const graduationAlbum = require('./routes/graduationAlbum')
+const result = require('./routes/Result')
 
 mongoose.connect('mongodb://localhost/bysj',{useNewUrlParser:true})
     .then(() => console.log('Connected to MongoDB...'))
@@ -16,5 +17,6 @@ app.get('/image/:imgUrl',(req,res)=>{
 })
 app.use('/api/graduationAlbum',graduationAlbum)
 app.use('/api/album',album)
+app.use('/api/result',result)
 const port = process.env.port || 3000
 app.listen(port,()=>console.log(`Listening port ${port}`))

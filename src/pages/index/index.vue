@@ -7,9 +7,10 @@
                 <span class="add" @click="showadd"></span>
             </a>
         </div>
-        <button open-type="getUserInfo" lang="zh_CN" class="hideuserInfo">
-            获取用户信息
+        <button open-type="getUserInfo" lang="zh_CN" class="hideuserInfo" :class="{'trust-hideinfo':isgetUserInfo}" @click="trustHideUserInfo">
+            点击授权
         </button>
+        <p class="user-info" :class="{'hide-user-info':isgetUserInfo}" >小程序需要获取权限才能正常访问，请点击授权按钮。</p>
         <!-- 无好友图标 -->
         <div class="no-person" v-if="isPersonList">
             <img src="../../../static/images/noaddress.png" class="no-address"/>
@@ -52,7 +53,7 @@
 
         <!-- 好友详情页 -->
         <div class="particular" v-if="hide">
-            <div class="container"><div class="nav">详情页</div></div>
+            <div class="container"><div class="nav">同学纪念册</div></div>
             <img :src="detailPic" 
                 class="img"
                 @click="headimage">
@@ -66,7 +67,7 @@
 
                 <div class="number">地区：{{list[index].area}}</div>
 
-                <div class="number">毕业纪念照<a href="../../pages/middle/main" class="changeto"></a></div>
+                <div class="number number-four">点击毕业照即可制作毕业故事</div>
                 
             </div>
             <div class="notestyle">好友留言：{{list[index].notes}}</div>
@@ -115,6 +116,7 @@ export default {
             checkUsernameShow: false,
             checkNumberShow: false,
             isPersonList: true,
+            isgetUserInfo: false,
 
             showModal: false,
             head: 'https://gss0.bdstatic.com/-4o3dSag_xI4khGkpoWK1HF6hhy/baike/c0%3Dbaike92%2C5%2C5%2C92%2C30/sign=62d46c39067b020818c437b303b099b6/d4628535e5dde7119c3d076aabefce1b9c1661ba.jpg'
@@ -144,35 +146,39 @@ export default {
         console.log('asdas')
     },
     methods: {
-         onLoad() {
-    wx.login()
-    // 查看是否授权
-     let _this=this
-     wx.getSetting({
-      success(res) {
-         wx.getUserInfo()
-        if (res.authSetting['scope.userInfo']) {
-          // 已经授权，可以直接调用 getUserInfo 获取头像昵称
-          wx.getUserInfo({
-            success:(res) =>{
-                console.log(res.userInfo,'用户信息')
-              _this.userInfo=res.userInfo
-              _this.userInfo.avatarUrl=_this.userInfo.avatarUrl.slice(20).split('/').join('')
-              _this.getUser()
+    onLoad() {
+        wx.login()
+        // 查看是否授权
+        let _this=this
+        wx.getSetting({
+            success(res) {
+                wx.getUserInfo()
+                if (res.authSetting['scope.userInfo']) {
+                // 已经授权，可以直接调用 getUserInfo 获取头像昵称
+                wx.getUserInfo({
+                    success:(res) =>{
+                        console.log(res.userInfo,'用户信息')
+                        _this.userInfo=res.userInfo
+                        _this.userInfo.avatarUrl=_this.userInfo.avatarUrl.slice(20).split('/').join('')
+                        _this.getUser()
+                    }
+                })
+                }else{
+                    _this.userInfo={
+                        avatarUrl:'admin'
+                    }
+                    _this.getUser()
+                }
             }
-          })
-        }else{
-            _this.userInfo={
-                avatarUrl:'admin'
-            }
-             _this.getUser()
-        }
-      }
-    })
-  },
-  bindGetUserInfo: function(e) {
-    console.log(e.detail.userInfo,'????')
-  },
+        })
+    },
+        trustHideUserInfo() {
+            this.isgetUserInfo = true
+        },
+
+        bindGetUserInfo: function(e) {
+            console.log(e.detail.userInfo,'????')
+        },
         clickHandle(event) {
             this.msghead = !this.msghead
         },
@@ -262,14 +268,6 @@ export default {
                         
                       }
                     })
-                // wx.request({ 
-                //     data:JSON.stringify(p),
-                //     method:'post',
-                //     url:this.$url+'/login',
-                //     success:res=>{
-                //         console.log(res,'????')
-                //     }
-                // })
                 this.person.name = ''
                 this.person.number=''
                 this.person.area=''
@@ -493,6 +491,11 @@ export default {
         margin-left: 10px;
         margin-top: 10px;
     }
+    .number-four {
+        font-size: 14px;
+        line-height: 14px;
+        color: #1296db;
+    }
     .headright {
         display: inline-block;
         vertical-align: top;
@@ -575,6 +578,27 @@ export default {
         vertical-align: middle;
     }
     .hideuserInfo {
+        position: absolute;
+        width: 200px;
+        height: 50px;
+        top: 30%;
+        left: 24%;
+    } 
+    .hideuserInfo:hover {
+        background-color: #1296db;
+    }
+    .user-info {
+        position: absolute;
+        top: 40%;
+        left: 13%;
+        font-size: 12px;
+        line-height: 20px;
+        background-color: #1296db;
+    }
+    .trust-hideinfo {
+        display: none;
+    }
+    .hide-user-info {
         display: none;
     }
 </style>
