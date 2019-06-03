@@ -78,7 +78,6 @@
         <!-- 同学列表 -->
         <div class="content-list">
             <ul>
-              
                 <listitem v-for="(item,index) in list" :key="index" :content="item.name" :ind="index"
                 @deleate="removeItem(index,item)"
                 @detailpage="detailshow(index,item)"
@@ -118,7 +117,7 @@ export default {
             isPersonList: true,
             isgetUserInfo: false,
 
-            showModal: false,
+            // showModal: false,
             head: 'https://gss0.bdstatic.com/-4o3dSag_xI4khGkpoWK1HF6hhy/baike/c0%3Dbaike92%2C5%2C5%2C92%2C30/sign=62d46c39067b020818c437b303b099b6/d4628535e5dde7119c3d076aabefce1b9c1661ba.jpg'
         }
     },
@@ -134,44 +133,42 @@ export default {
        }
     },
     mounted(){
-       
         if(!this.list.length){
             this.isPersonList = false
         }
-
-      this.onLoad()
+        this.onLoad()
         
     },
     activated() {
         console.log('asdas')
     },
     methods: {
-    onLoad() {
-        wx.login()
-        // 查看是否授权
-        let _this=this
-        wx.getSetting({
-            success(res) {
-                wx.getUserInfo()
-                if (res.authSetting['scope.userInfo']) {
-                // 已经授权，可以直接调用 getUserInfo 获取头像昵称
-                wx.getUserInfo({
-                    success:(res) =>{
-                        console.log(res.userInfo,'用户信息')
-                        _this.userInfo=res.userInfo
-                        _this.userInfo.avatarUrl=_this.userInfo.avatarUrl.slice(20).split('/').join('')
+        onLoad() {
+            wx.login()
+            // 查看是否授权
+            let _this=this
+            wx.getSetting({
+                success(res) {
+                    wx.getUserInfo()
+                    if (res.authSetting['scope.userInfo']) {
+                    // 已经授权，可以直接调用 getUserInfo 获取头像昵称
+                    wx.getUserInfo({
+                        success:(res) =>{
+                            console.log(res.userInfo,'用户信息')
+                            _this.userInfo=res.userInfo
+                            _this.userInfo.avatarUrl=_this.userInfo.avatarUrl.slice(20).split('/').join('')
+                            _this.getUser()
+                        }
+                    })
+                    }else{
+                        _this.userInfo={
+                            avatarUrl:'admin'
+                        }
                         _this.getUser()
                     }
-                })
-                }else{
-                    _this.userInfo={
-                        avatarUrl:'admin'
-                    }
-                    _this.getUser()
                 }
-            }
-        })
-    },
+            })
+        },
         trustHideUserInfo() {
             this.isgetUserInfo = true
         },
@@ -220,6 +217,7 @@ export default {
             this.checkNumberShow = false
         },
 
+        // 提交添加好友字段
         addItem() {
             if (!this.person.name) {
                 return this.checkUsername()
@@ -241,16 +239,12 @@ export default {
                 // this.list.push(p)
                
                 let _this=this
-                 wx.uploadFile({
-                    // url: _this.$url+`/uploadFile?${_this.$qs.stringify(p)}`,
+                wx.uploadFile({
                     url:_this.$url+'/api/connecters',
                     filePath:_this.head[0], 
                     formData:p,
                     name:'image',
                     header: { "Content-Type": "multipart/form-data" },
-                    //  formData: {
-                    //    filePath:res.tempFilePaths[0]
-                    //  }, // HTTP 请求中其他额外的 form data
                     success: (res)=>{
                         var resData = res.data;
                         console.log('上传成功')
@@ -263,11 +257,9 @@ export default {
                     },
                     complete: function() {
                         // complete
-                      
-                            wx.hideLoading();    //上传结束，隐藏loading
-                        
-                      }
-                    })
+                        wx.hideLoading();    //上传结束，隐藏loading 
+                    }
+                })
                 this.person.name = ''
                 this.person.number=''
                 this.person.area=''
@@ -282,6 +274,7 @@ export default {
             }
         }, 
         
+        //删除列表方法
         removeItem(e,item) {
             //this.list.splice(e,1)
             if(this.list.length===0){
@@ -307,38 +300,31 @@ export default {
          * 获取数据库字段
          */
         getUser(){
-       console.log(`${this.userInfo.avatarUrl}`,'结果')
-               wx.request({ 
-                    
-                    method:'get',
-                    url:this.$url+`/api/connecters/${this.userInfo.avatarUrl}`,
-                    success:res=>{
-                        this.list=res.data
-                        console.log(res,'2312424')
-                    }
-                })
-        
-               
-           
+            console.log(`${this.userInfo.avatarUrl}`,'结果')
+            wx.request({ 
+                method:'get',
+                url:this.$url+`/api/connecters/${this.userInfo.avatarUrl}`,
+                success:res=>{
+                    this.list=res.data
+                    console.log(res,'获取的同学')
+                }
+            })  
         },
-          headimage: function() {   
+
+        // 头像方法
+        headimage: function() {   
             var _this = this;
             console.log(this,'?????')
-            
             wx.chooseImage({    
                 count: 1, // 默认9      
+                // 指定是原图还是压缩图，默认两个都有
                 sizeType: ['original', 'compressed'],       
-                // 指定是原图还是压缩图，默认两个都有      
+                // 指定来源是相册还是相机，默认两个都有 
                 sourceType: ['album', 'camera'],      
-                // 指定来源是相册还是相机，默认两个都有    
                 success: function(res) { 
-                    
                     var tempFilePaths = res.tempFilePaths
-                     
-                        _this.head = tempFilePaths
-                        console.log(res.tempFilePaths[0],'文件路径')
-                       
-                          
+                    _this.head = tempFilePaths
+                    console.log(res.tempFilePaths[0],'文件路径')         
                 }    
             }) 
         }
@@ -346,8 +332,8 @@ export default {
     },
 
     components: {
-    'listitem': listitem
-  }
+        'listitem': listitem
+    }
 }
 </script>
 

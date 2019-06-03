@@ -125,10 +125,6 @@
           </div>
 
           <div class="movable-area">
-            <!-- <div class="testOne"></div> -->
-             <!-- direction="all" @change="onChange($event,isIndex-1)" @scale="onScale($event,isIndex-1)"
-               :x="urls[isIndex-1].position.x||0" :y="urls[isIndex-1].position.y||0" 
-              scale scale-min="0.5" scale-max="4" :scale-value="urls[isIndex-1].position.scale||2" -->
             <div class="movable-view" >
               <img :src="urls[isIndex-1].src" class="diyimg" @click="tap">
             </div>
@@ -597,68 +593,39 @@ import { resolve } from 'url';
         this.audioCtx = wx.createAudioContext('Audio')
       },
       methods:{
-    updatedPPt(id){
+        updatedPPt(id){
           wx.request({
-                  method:'put',
-                  url:this.$url+`/api/graduationAlbum/${id}`,
-                  data:{
-                     
-                  },
-                  success:(res)=>{
-                    console.log(`删除照片成功`)
-                  }
-                })
-    },
-          onLoad() {
-    // 查看是否授权
-     let _this=this
-     wx.getSetting({
-      success(res) {
-         
-        if (res.authSetting['scope.userInfo']) {
-          // 已经授权，可以直接调用 getUserInfo 获取头像昵称
-          wx.getUserInfo({
-            success:(res) =>{
-                console.log(res.userInfo,'用户信息')
-              _this.userInfo=res.userInfo
-              _this.userInfo.avatarUrl=_this.userInfo.avatarUrl.slice(20).split('/').join('')
+            method:'put',
+            url:this.$url+`/api/graduationAlbum/${id}`,
+            data:{
+            },
+            success:(res)=>{
+              console.log(`删除照片成功`)
             }
           })
-        }else{
-            _this.userInfo={
-                avatarUrl:'admin'
+        },
+
+        onLoad() {
+          // 查看是否授权
+          let _this=this
+          wx.getSetting({
+            success(res) {
+              if (res.authSetting['scope.userInfo']) {
+                // 已经授权，可以直接调用 getUserInfo 获取头像昵称
+                wx.getUserInfo({
+                  success:(res) =>{
+                      console.log(res.userInfo,'用户信息')
+                    _this.userInfo=res.userInfo
+                    _this.userInfo.avatarUrl=_this.userInfo.avatarUrl.slice(20).split('/').join('')
+                  }
+                })
+              }else{
+                  _this.userInfo={
+                      avatarUrl:'admin'
+                  }
+              }
             }
-        }
-      }
-    })
-          },
-        /**
-         * 图片滑动
-         */
-        tap(e) {
-            this.x = 0,
-            this.y = 0,
-            this.scale = 3
-            console.log(this.x,this.y,this.scale)
-        },
-        onChange(e,index) {
-          // console.log(this.urls[index].position.x,this.urls[index].position.y,'adasdasd')
-          console.log(e,'xy')
-
-          this.finalData[index].position.x = e.x 
-          this.rx = this.finalData[index].position.x
-          console.log(this.rx,'x')
-
-          this.finalData[index].position.y= e.y 
-          this.ry = this.finalData[index].position.y
-          console.log(this.ry,'y')
-          // console.log(e,'asdasd',index)
-        },
-        onScale(e,index) {
-          console.log(e,'scale')
-          // console.log(e.target.scale,index)
-          this.finalData[index].position.scale=e.target.scale;
-          console.log(this.finalData[index].position.scale,'scalee')
+          })
         },
 
         /**
@@ -678,59 +645,54 @@ import { resolve } from 'url';
               console.log(res.tempFilePaths)
               res.tempFilePaths.forEach(v=>{
                 that.urls.push({src:v});
-               
               });
-             that.num+= that.urls.length
-             if(target){
-                let imgArr=[]
-             for(let i=0,j=res.tempFilePaths.length;i<=j;i++  ){
-               if(res.tempFilePaths[i]){
-                       that.uploadFile(res.tempFilePaths[i],{
-                 avatarUrl:that.userInfo.avatarUrl,
-                 index:i
-              },target)
-               }
-                   
-
-             }
-             }
-            
-              
-         console.log(imgArr,'sdasd')
-              that.$emit("choosed",{all:that.urls,currentUpload:res.tempFilePaths});
+              that.num+= that.urls.length
+              if(target){
+                  let imgArr=[]
+                for(let i=0,j=res.tempFilePaths.length;i<=j;i++  ){
+                  if(res.tempFilePaths[i]){
+                    that.uploadFile(res.tempFilePaths[i],{
+                      avatarUrl:that.userInfo.avatarUrl,
+                      index:i
+                    },target)
+                  }
+                }
+              }  
+              console.log(imgArr,'sdasd')
+                that.$emit("choosed",{all:that.urls,currentUpload:res.tempFilePaths});
             }
           })
         },
+
         uploadFile(filePath,option,target){
             return new Promise((resolve,reject)=>{
-                     wx.uploadFile({
-                    url:this.$url+target,
-                    filePath:filePath, 
-                    formData:option,
-                    name:'file',
-                    header: { "Content-Type": "multipart/form-data" },
-                    //  formData: {
-                    //    filePath:res.tempFilePaths[0]
-                    //  }, // HTTP 请求中其他额外的 form data
-                    success: function(res){
-                        var resData = res.data;
-                        console.log('上传成功',res.data.imgUrl)
-                           resolve('上传成功')
-                        // success
-                    },
-                    fail: function(res) {
-                        // fail
-                        var resData =res;
-                    },
-                    complete: function() {
-                        // complete
-                      
-                            wx.hideLoading();    //上传结束，隐藏loading
-                        
-                      }
-                    }) 
-            })  
+              wx.uploadFile({
+                url:this.$url+target,
+                filePath:filePath, 
+                formData:option,
+                name:'file',
+                header: { "Content-Type": "multipart/form-data" },
+                //  formData: {
+                //    filePath:res.tempFilePaths[0]
+                //  }, // HTTP 请求中其他额外的 form data
+                success: function(res){
+                  var resData = res.data;
+                  console.log('上传成功',res.data.imgUrl)
+                  resolve('上传成功')
+                  // success
+                },
+                fail: function(res) {
+                  // fail
+                  var resData =res;
+                },
+                complete: function() {
+                  // complete
+                  wx.hideLoading();    //上传结束，隐藏loading
+                 }
+              }) 
+          })  
         },
+
         previewImg(index,item){
           let that = this;
           wx.showActionSheet({
@@ -746,7 +708,7 @@ import { resolve } from 'url';
                   method:'delete',
                   url:this.$url+`/api/album/${item._id}`,
                   success:(res)=>{
-                    console.log(`照片删除成功`)
+                  console.log(`照片删除成功`)
                   }
                 })
                 that.urls.splice(index,1);
@@ -756,34 +718,28 @@ import { resolve } from 'url';
           });
         },
 
-
         showEleImgStore() {
           this.showImgStore = !this.showImgStore
           wx.request({
              method:'get',
              url:this.$url+`/api/album/${this.userInfo.avatarUrl}`,
              success: (res)=>{
-                 this.urls=[]
-                 res.data.forEach(item=>{
-                   this.urls.push({...item,src:this.$url+`/image/${item.imgUrl}`})
-                   console.log(this.urls)
-                 })
+                this.urls=[]
+                res.data.forEach(item=>{
+                this.urls.push({...item,src:this.$url+`/image/${item.imgUrl}`})
+                console.log(this.urls)
+                })
              }
           })
         },
 
+        // 控制上下翻页
         indexBack() {
           this.isIndex = this.isIndex - 1
           
           if(this.isIndex===0) {
             this.isIndex = this.isIndex + 1
           }
-
-          // if(this.isIndex===0) {
-          //   this.isBack = false
-          // } else {
-          //   this.isBack = true
-          // }
         },
 
         indexNext() {
@@ -792,11 +748,6 @@ import { resolve } from 'url';
           if(this.isIndex===6) {
             this.isIndex = this.isIndex - 1
           }
-          // if(this.isIndex===6) {
-          //   this.isNext = false
-          // } else {
-          //   this.isNext = true
-          // }
         },
 
         hideEleImgStore() {
@@ -819,8 +770,8 @@ import { resolve } from 'url';
           this.showImgSelect = true
         },
 
-  showGrade(target) {
-          // this.urls=[]
+        showGrade(target) {
+          
           let that=this
    
           new Promise (async (resolve,reject)=>{
@@ -835,10 +786,9 @@ import { resolve } from 'url';
                 resolve('上传完毕')
             }).then(res=>{
               wx.request({
-            method:'get',
-            url:this.$url+`/api/graduationAlbum/${this.userInfo.avatarUrl}/${this.num}`,
-            success:(res)=>{
-
+              method:'get',
+              url:this.$url+`/api/graduationAlbum/${this.userInfo.avatarUrl}/${this.num}`,
+              success:(res)=>{
                  res.data.sort((a,b)=>{
             
                     return a.index > b.index
@@ -917,48 +867,36 @@ import { resolve } from 'url';
                 }
             }
           })
-      
- })
-
-         
-            
-        },
+        })     
+      },
 
         resetGradeStory() {
           this.showGradeStory = false
-          this.showGradeStoryone = false //xinjia
+          this.showGradeStoryone = false
           this.ismodel = false
         },
 
         closeGradeStory() {
           this.showGradeStory = false
-          this.showGradeStoryone = false //xinjia
+          this.showGradeStoryone = false
           this.showImgSelect = false
           this.showStory = false
           this.ismodel = false
         },
 
         showChangeText(index) {
-          // console.log(index,this.finalData)
-          // this.finalData[index].describle = this.isTextOne
           this.isShowText = true
           this.isDom = false
         },
 
         closeChangeText(index) {
-          // let textObj={
-          
-          // }
-          // console.log(this.isIndex,'ss',this.final,Data,this.isTextOne)
-          // this.finalData[this.isIndex-1].describle = this.isTextOne
-          
           this.isShowText = false
           this.isDom = true
         },
 
         closeFinishedStory() {
           this.showGradeStory = false
-          this.showGradeStoryone = false //xinjiaa
+          this.showGradeStoryone = false
           this.showImgSelect = false
           this.showStory = false
           this.showclose = false
@@ -1004,33 +942,33 @@ import { resolve } from 'url';
                 url:this.$url+`/api/result/${this.userInfo.avatarUrl}`,
                 success:(ret)=>{
                   // console.log(ret,'bishe')
-                    this.urls=ret.data[0].result;  
+                    // this.urls=ret.data[0].result;  
                     // console.log(this.urls,'123')
                     this.urls=this.urls.map((item,index)=>{
                       let arr=[]
                        if(index===0) {
-                          arr=item.describle.split('/n')
+                          arr=item.describle.split('\n')
                           this.isTextOne=arr[0]
                           this.isTextTwo=arr[1]
                        }else if(index===1) {
-                          arr=item.describle.split('/n')
+                          arr=item.describle.split('\n')
                           this.twoisTextOne=arr[0]
                           this.twoisTextTwo=arr[1]
                           this.twoisTextThree=arr[2]
                           this.twoisTextFour=arr[3]
                        }else if(index===2) {
-                          arr=item.describle.split('/n')
+                          arr=item.describle.split('\n')
                           this.threeisTextOne=arr[0]
                           this.threeisTextTwo=arr[1]
                           this.threeisTextThree=arr[2]
                        }else if(index===3) {
-                          arr=item.describle.split('/n')
+                          arr=item.describle.split('\n')
                           this.fourisTextOne=arr[0]
                           this.fourisTextTwo=arr[1]
                           this.fourisTextThree=arr[2]
                           this.fourisTextFour=arr[3]
                        }else if(index===4) {
-                          arr=item.describle.split('/n')
+                          arr=item.describle.split('\n')
                           this.fiveisTextOne=arr[0]
                           this.fiveisTextTwo=arr[1]
                           this.fiveisTextThree=arr[2]
@@ -1042,89 +980,80 @@ import { resolve } from 'url';
                })
              }
           })
-          // this.showGradeStory = true
+
           this.showclose = true
           this.isDom = false
           this.isIndex = 1
           this.isShadow = true
          
         },
-           
-          // console.log(that.$refs.modelTwoIndex1,'?!!?')
-          // this.$refs.modelTwoIndex1.setAttribute('x',x)=this.urls[0].position.x;
-          // that.$refs.modelTwoIndex1.y=that.urls[0].position.y;   
-          // var viewOne = document.getElementsByClassName("view-one")
-          // console.log(viewOne)
-       
 
-      imgStorySubmittwo() {
-          wx.request({
-                  method:'get',
+        imgStorySubmittwo() {
+            wx.request({
+                method:'get',
                 url:this.$url+`/api/result/${this.userInfo.avatarUrl}`,
                 success:(ret)=>{
-                  // console.log(`毕设`)
-                      this.urls=ret.data[0].result;
+                    this.urls=ret.data[0].result;
                     //  console.log(this.urls,ret.data[0]);
-                      this.model=ret.data[0].model;
-                      this.finalData=ret.data[0].result;
+                    this.model=ret.data[0].model;
+                    this.finalData=ret.data[0].result;
 
-                      let textOnePage = this.finalData[0].describle.split('\n')
-                      console.log(textOnePage,'文本1')
-                      this.isTextOne = textOnePage[0]
-                      this.isTextTwo = textOnePage[1]
+                    let textOnePage = this.finalData[0].describle.split('\n')
+                    console.log(textOnePage,'文本1')
+                    this.isTextOne = textOnePage[0]
+                    this.isTextTwo = textOnePage[1]
+                        
+                    let textTwoPage = this.finalData[1].describle.split('\n')
+                    console.log(textTwoPage,'文本2')
+                    this.twoisTextOne = textTwoPage[0]
+                    this.twoisTextTwo = textTwoPage[1]
+                    this.twoisTextThree = textTwoPage[2]
+                    this.twoisTextFour = textTwoPage[3]
+
+                    let textThreePage = this.finalData[2].describle.split('\n')
+                    console.log(textThreePage,'文本3')
+                    this.threeisTextOne = textThreePage[0]
+                    this.threeisTextTwo = textThreePage[1]
+                    this.threeisTextThree = textThreePage[2]
+                        
+                    let textFourPage = this.finalData[3].describle.split('\n')
+                    console.log(textFourPage,'文本4')
+                    this.fourisTextOne = textFourPage[0]
+                    this.fourisTextTwo = textFourPage[1]
+                    this.fourisTextThree = textFourPage[2]
+                    this.fourisTextFour = textFourPage[3]
+
+                    let textFivePage = this.finalData[4].describle.split('\n')
+                    console.log(textFivePage,'文本5')
+                    this.fiveisTextOne = textFivePage[0]
+                    this.fiveisTextTwo = textFivePage[1]
+                    this.fiveisTextThree = textFivePage[2]
+                    this.fiveisTextFour = textFivePage[3]
+
+                    if(this.isborderone==true&&this.isbordertwo==false||this.model===1) {
+                      //原先的
+                      this.showGradeStoryone = true
+                      this.showGradeStory = false
+                      this.isDom = true
+                      this.isIndex = 1
+                    }
+                    if(this.isborderone==false&&this.isbordertwo==true||this.model===2) {
                       
-                      let textTwoPage = this.finalData[1].describle.split('\n')
-                      console.log(textTwoPage,'文本2')
-                      this.twoisTextOne = textTwoPage[0]
-                      this.twoisTextTwo = textTwoPage[1]
-                      this.twoisTextThree = textTwoPage[2]
-                      this.twoisTextFour = textTwoPage[3]
-
-                      let textThreePage = this.finalData[2].describle.split('\n')
-                      console.log(textThreePage,'文本3')
-                      this.threeisTextOne = textThreePage[0]
-                      this.threeisTextTwo = textThreePage[1]
-                      this.threeisTextThree = textThreePage[2]
-                      
-                      let textFourPage = this.finalData[3].describle.split('\n')
-                      this.fourisTextOne = textFourPage[0]
-                      this.fourisTextTwo = textFourPage[1]
-                      this.fourisTextThree = textFourPage[2]
-                      this.fourisTextFour = textFourPage[3]
-
-                      let textFivePage = this.finalData[4].describle.split('\n')
-                      this.fiveisTextOne = textFivePage[0]
-                      this.fiveisTextTwo = textFivePage[1]
-                      this.fiveisTextThree = textFivePage[2]
-                      this.fiveisTextFour = textFivePage[3]
-
-                  if(this.isborderone==true&&this.isbordertwo==false||this.model===1) {
-                    //原先的
-                
-                    this.showGradeStoryone = true
-                    this.showGradeStory = false
-                    this.isDom = true
+                      this.showGradeStory = true
+                      this.showGradeStoryone = false
+                      this.isDom = true
+                      this.isIndex = 1
+                    }
+                    console.log(this.urls,'???')
+                    this.showclose = true
+                    this.isDom = false
                     this.isIndex = 1
+                    this.isShadow = true
                   }
-                  if(this.isborderone==false&&this.isbordertwo==true||this.model===2) {
-                    
-                    this.showGradeStory = true
-                    this.showGradeStoryone = false
-                    this.isDom = true
-                    this.isIndex = 1
-                  }
-                        console.log(this.urls,'???')
-                  this.showclose = true
-                  this.isDom = false
-                  this.isIndex = 1
-                  this.isShadow = true
-                }
-               })
-           
-          
+              })
         },
 
-        // music
+        // 控制背景音乐播放
         controlMusic: function() {
 
           if(this.isplay) {
